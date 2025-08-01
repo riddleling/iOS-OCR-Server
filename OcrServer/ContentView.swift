@@ -8,17 +8,58 @@
 import SwiftUI
 
 struct ContentView: View {
+    let wifiAddress: String
+    let ethernetAddress: String
+    
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+            Text("OCR Server v\(Bundle.main.appVersion)")
+                .font(.title2)
+                .foregroundColor(.white)
+                .padding()
+            
+            Spacer()
+                .frame(height: 100)
+            
+            Text("Wifi (en0) :")
+                .font(.headline)
+                .foregroundColor(.white)
+            Text(wifiAddress)
+                .font(.title)
+                .foregroundColor(.white)
+                .padding()
+            
+            Spacer()
+                .frame(height: 60)
+            
+            Text("Ethernet (en1) :")
+                .font(.headline)
+                .foregroundColor(.white)
+            Text(ethernetAddress)
+                .font(.title)
+                .foregroundColor(.white)
+                .padding()
         }
-        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.black)
     }
 }
 
 #Preview {
-    ContentView()
+    ContentView(wifiAddress: "http://127.0.0.1:8080",
+                ethernetAddress: "http://127.0.0.1:8080")
+}
+
+extension Bundle {
+    var appVersion: String {
+        return infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown version"
+    }
+    
+    var buildNumber: String {
+        return infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
+    }
+    
+    var fullVersion: String {
+        return "\(appVersion) (\(buildNumber))"
+    }
 }

@@ -9,9 +9,17 @@ import SwiftUI
 
 @main
 struct OcrServerApp: App {
+    @StateObject private var serverManager = ServerManager()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(
+                wifiAddress: serverManager.wifiAddress,
+                ethernetAddress: serverManager.ethernetAddress
+            )
+            .onAppear {
+                UIApplication.shared.isIdleTimerDisabled = true
+            }
         }
     }
 }

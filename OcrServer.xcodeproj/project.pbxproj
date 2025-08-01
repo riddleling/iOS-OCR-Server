@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		25B2C6FD2E3CF32F00B4A7C9 /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = 25B2C6FC2E3CF32F00B4A7C9 /* Swifter */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		25B2C6ED2E3CF13400B4A7C9 /* OcrServer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OcrServer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				25B2C6FD2E3CF32F00B4A7C9 /* Swifter in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = OcrServer;
 			packageProductDependencies = (
+				25B2C6FC2E3CF32F00B4A7C9 /* Swifter */,
 			);
 			productName = OcrServer;
 			productReference = 25B2C6ED2E3CF13400B4A7C9 /* OcrServer.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = 25B2C6E42E3CF13300B4A7C9;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				25B2C6FB2E3CF32F00B4A7C9 /* XCRemoteSwiftPackageReference "swifter" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 25B2C6EE2E3CF13400B4A7C9 /* Products */;
 			projectDirPath = "";
@@ -251,6 +260,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZQQXZWEJB5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -278,6 +288,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZQQXZWEJB5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -320,6 +331,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		25B2C6FB2E3CF32F00B4A7C9 /* XCRemoteSwiftPackageReference "swifter" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/httpswift/swifter";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		25B2C6FC2E3CF32F00B4A7C9 /* Swifter */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 25B2C6FB2E3CF32F00B4A7C9 /* XCRemoteSwiftPackageReference "swifter" */;
+			productName = Swifter;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 25B2C6E52E3CF13400B4A7C9 /* Project object */;
 }
