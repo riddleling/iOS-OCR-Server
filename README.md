@@ -1,5 +1,8 @@
 # iOS OCR Server
 
+iOS OCR Server, using Apple's Vision Framework API.
+
+
 ## How to use
 
 After launching the app, you can upload images from the home page or upload them via the `upload` API
