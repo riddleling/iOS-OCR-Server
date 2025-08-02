@@ -14,6 +14,7 @@ struct OcrServerApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(
+                serverStatus: serverManager.status,
                 wifiAddress: serverManager.wifiAddress,
                 ethernetAddress: serverManager.ethernetAddress
             )

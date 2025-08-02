@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    let serverStatus: String
     let wifiAddress: String
     let ethernetAddress: String
     
@@ -18,8 +19,13 @@ struct ContentView: View {
                 .foregroundColor(.white)
                 .padding()
             
+            Text("Status: \(serverStatus)")
+                .font(.headline)
+                .foregroundColor(.white)
+                .padding()
+            
             Spacer()
-                .frame(height: 100)
+                .frame(height: 120)
             
             Text("Wifi (en0) :")
                 .font(.headline)
@@ -46,8 +52,11 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView(wifiAddress: "http://127.0.0.1:8080",
-                ethernetAddress: "http://127.0.0.1:8080")
+    ContentView(
+        serverStatus: "server is running",
+        wifiAddress: "http://127.0.0.1:8080",
+        ethernetAddress: "http://127.0.0.1:8080"
+    )
 }
 
 extension Bundle {

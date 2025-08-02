@@ -10,8 +10,9 @@ import Swifter
 
 class ServerManager: ObservableObject {
     let server = HttpServer()
-    let port = 8080
+    let port = 8000
     
+    @Published var status: String = ""
     @Published var wifiAddress: String = "No available IP found"
     @Published var ethernetAddress: String = "No available IP found"
     
@@ -91,8 +92,10 @@ class ServerManager: ObservableObject {
         do {
             try server.start(in_port_t(port))
             print("Server started at port \(port)")
+            status = "server is running"
         } catch {
             print("Unable to start server: \(error)")
+            status = "unable to start the server"
         }
     }
     
