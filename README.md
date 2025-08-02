@@ -6,7 +6,7 @@ After launching the app, you can upload images from the home page or upload them
 
 ```
 curl -H "Accept: application/json" \
-  -X POST http://<YOUR IP>:8080/upload \
+  -X POST http://<YOUR IP>:8000/upload \
   -F "file=@01.png"
 ```
 
