@@ -17,12 +17,12 @@ struct ContentView: View {
             Text("OCR Server v\(Bundle.main.appVersion)")
                 .font(.title2)
                 .foregroundColor(.white)
-                .padding()
+                
             
-            Text("Status: \(serverStatus)")
+            Text("Status : \(serverStatus)")
                 .font(.headline)
                 .foregroundColor(.white)
-                .padding()
+                .padding(10)
             
             Spacer()
                 .frame(height: 120)
@@ -33,10 +33,10 @@ struct ContentView: View {
             Text(wifiAddress)
                 .font(.title)
                 .foregroundColor(.white)
-                .padding()
+                .padding(5)
             
             Spacer()
-                .frame(height: 60)
+                .frame(height: 80)
             
             Text("Ethernet (en1) :")
                 .font(.headline)
@@ -44,7 +44,7 @@ struct ContentView: View {
             Text(ethernetAddress)
                 .font(.title)
                 .foregroundColor(.white)
-                .padding()
+                .padding(5)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black)
