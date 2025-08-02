@@ -39,11 +39,14 @@ class ServerManager: ObservableObject {
                 <title>OCR Server</title>
             </head>
             <body>
-                <h1>File Upload</h1>
+                <h1>OCR Server</h1>
                 <form action="/upload" method="post" enctype="multipart/form-data">
-                    <input type="file" name="file" required>
+                    <label>
+                        Choose file:
+                        <input type="file" name="file" required>
+                    </label>
                     <br><br>
-                    <input type="submit" value="Upload">
+                    <input type="submit" value="Upload file">
                 </form>
             </body>
             </html>
@@ -116,7 +119,6 @@ class ServerManager: ObservableObject {
         for ptr in sequence(first: firstAddr, next: { $0.pointee.ifa_next }) {
             let interfaceName = String(cString: ptr.pointee.ifa_name)
 
-            // Only handle en0 / en1
             if interfaceName == interface {
                 let flags = Int32(ptr.pointee.ifa_flags)
                 var addr = ptr.pointee.ifa_addr.pointee
