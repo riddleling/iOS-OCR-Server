@@ -99,13 +99,13 @@ class ServerManager: ObservableObject {
         }
     }
     
-    func htmlEscape(_ s: String) -> String {
+    private func htmlEscape(_ s: String) -> String {
         s.replacingOccurrences(of: "&", with: "&amp;")
          .replacingOccurrences(of: "<", with: "&lt;")
          .replacingOccurrences(of: ">", with: "&gt;")
     }
     
-    func getIP(for interface: String) -> String? {
+    private func getIP(for interface: String) -> String? {
         var ifaddr: UnsafeMutablePointer<ifaddrs>?
 
         guard getifaddrs(&ifaddr) == 0, let firstAddr = ifaddr else {
