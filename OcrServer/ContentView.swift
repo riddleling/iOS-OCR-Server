@@ -25,7 +25,7 @@ struct ContentView: View {
                 .padding(10)
             
             Spacer()
-                .frame(height: 120)
+                .frame(height: 150)
             
             Text("Wifi (en0) :")
                 .font(.headline)
