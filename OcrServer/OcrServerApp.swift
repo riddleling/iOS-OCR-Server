@@ -14,9 +14,7 @@ struct OcrServerApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(
-                serverStatus: serverManager.status,
-                wifiAddress: serverManager.wifiAddress,
-                ethernetAddress: serverManager.ethernetAddress
+                serverManager: serverManager
             )
             .onAppear {
                 UIApplication.shared.isIdleTimerDisabled = true

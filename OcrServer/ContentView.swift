@@ -8,54 +8,116 @@
 import SwiftUI
 
 struct ContentView: View {
-    let serverStatus: String
-    let wifiAddress: String
-    let ethernetAddress: String
+    @ObservedObject var serverManager: ServerManager
+    @State private var isRefreshing = false
+    @State private var lastRefreshTime = Date()
     
     var body: some View {
         VStack {
+            HStack {
+                Button(action: refreshNetworkAddresses) {
+                    HStack(spacing: 8) {
+                        if isRefreshing {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        } else {
+                            Image(systemName: "arrow.clockwise")
+                                .font(.title3)
+                        }
+                        Text("Refresh IP")
+                            .font(.headline)
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(isRefreshing ? Color.gray.opacity(0.7) : Color.blue.opacity(0.7))
+                    .cornerRadius(8)
+                }
+                .disabled(isRefreshing)
+            }
+            .padding(.bottom, 50)
+            
             Text("OCR Server v\(Bundle.main.appVersion)")
                 .font(.title2)
                 .foregroundColor(.white)
-                
             
-            Text("Status : \(serverStatus)")
+            Text("Status : \(serverManager.status)")
                 .font(.headline)
                 .foregroundColor(.white)
                 .padding(10)
             
             Spacer()
-                .frame(height: 150)
+                .frame(height: 100)
             
-            Text("Wifi (en0) :")
+            ForEach(Array(serverManager.networkAddresses.keys.sorted()), id: \.self) { interfaceName in
+                NetworkInterfaceView(
+                    title: getDisplayName(for: interfaceName),
+                    address: getAddressString(for: serverManager.networkAddresses[interfaceName])
+                )
+                
+                if interfaceName != Array(serverManager.networkAddresses.keys.sorted()).last {
+                    Spacer()
+                        .frame(height: 20)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.black)
+    }
+    
+    private func refreshNetworkAddresses() {
+        isRefreshing = true
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            serverManager.refreshNetworkAddresses()
+            
+            withAnimation(.easeInOut(duration: 0.3)) {
+                lastRefreshTime = Date()
+                isRefreshing = false
+            }
+        }
+        
+    }
+    
+    private func getAddressString(for address: String?) -> String {
+        if let addr = address {
+            return "http://\(addr):\(serverManager.port)"
+        }
+        return "No available IP found"
+    }
+    
+    private func getDisplayName(for interfaceName: String) -> String {
+        switch interfaceName {
+        case "en0":
+            return "Wifi (en0)"
+        default:
+            return "Ethernet (\(interfaceName))"
+        }
+    }
+}
+
+struct NetworkInterfaceView: View {
+    let title: String
+    let address: String
+    
+    var body: some View {
+        VStack(spacing: 5) {
+            Text(title)
                 .font(.headline)
                 .foregroundColor(.white)
-            Text(wifiAddress)
-                .font(.title)
-                .foregroundColor(.white)
-                .padding(5)
             
-            Spacer()
-                .frame(height: 80)
-            
-            Text("Ethernet (en1) :")
-                .font(.headline)
-                .foregroundColor(.white)
-            Text(ethernetAddress)
+            Text(address)
                 .font(.title)
                 .foregroundColor(.white)
                 .padding(5)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.black)
     }
 }
 
 #Preview {
     ContentView(
-        serverStatus: "server is running",
-        wifiAddress: "http://127.0.0.1:8080",
-        ethernetAddress: "http://127.0.0.1:8080"
+        serverManager: ServerManager()
     )
 }
 

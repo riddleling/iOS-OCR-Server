@@ -11,21 +11,28 @@ import Swifter
 class ServerManager: ObservableObject {
     let server = HttpServer()
     let port = 8000
+    let networkInterfaces = ["en0", "en1", "en2", "en3", "en4", "en5"]
     
     @Published var status: String = ""
-    @Published var wifiAddress: String = "No available IP found"
-    @Published var ethernetAddress: String = "No available IP found"
+    @Published var networkAddresses: [String: String] = [:]
+    
     
     init() {
         setupServer()
+        refreshNetworkAddresses()
+    }
+    
+    func refreshNetworkAddresses() {
+        networkAddresses.removeAll()
         
-        if let ipEn0 = getIP(for: "en0") {
-            wifiAddress = "http://\(ipEn0):\(port)"
+        for interface in networkInterfaces {
+            if let ip = getIP(for: interface) {
+                print("\(interface): \(ip)")
+                networkAddresses[interface] = ip
+            }
         }
-
-        if let ipEn1 = getIP(for: "en1") {
-            ethernetAddress = "http://\(ipEn1):\(port)"
-        }
+        
+        print("Network addresses refreshed: \(networkAddresses)")
     }
     
     private func setupServer() {
