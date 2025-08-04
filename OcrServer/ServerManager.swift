@@ -19,7 +19,6 @@ class ServerManager: ObservableObject {
     
     init() {
         startServer()
-        refreshNetworkAddresses()
     }
     
     // 啟動伺服器
