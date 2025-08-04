@@ -2,6 +2,7 @@
 
 iOS OCR Server, using Apple's Vision Framework API.
 
+![image](image.jpg)
 
 ## How to use
 
