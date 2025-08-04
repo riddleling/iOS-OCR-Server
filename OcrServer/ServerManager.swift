@@ -18,8 +18,42 @@ class ServerManager: ObservableObject {
     
     
     init() {
-        setupServer()
+        startServer()
         refreshNetworkAddresses()
+    }
+    
+    // 啟動伺服器
+    private func startServer() {
+        setupRoutes()
+        do {
+            try server.start(in_port_t(port))
+            print("Server started at port \(port)")
+            status = "server is running"
+            refreshNetworkAddresses()
+            monitorServer()
+        } catch {
+            print("Unable to start server: \(error)")
+            status = "unable to start the server"
+        }
+    }
+    
+    // 監控伺服器狀態並自動重啟
+    private func monitorServer() {
+        DispatchQueue.global().async {
+            while true {
+                sleep(2)
+                if !self.server.operating {
+                    DispatchQueue.main.async {
+                        self.status = "server stopped - restarting..."
+                    }
+                    print("Server stopped unexpectedly. Restarting...")
+                    self.server.stop()
+                    sleep(1) // 等待資源釋放
+                    self.startServer()
+                    break // 重新啟動後由新的 monitor 負責監控
+                }
+            }
+        }
     }
     
     func refreshNetworkAddresses() {
@@ -35,7 +69,7 @@ class ServerManager: ObservableObject {
         print("Network addresses refreshed: \(networkAddresses)")
     }
     
-    private func setupServer() {
+    private func setupRoutes() {
         server["/"] = { _ in
             let html = """
             <!doctype html>
@@ -97,15 +131,6 @@ class ServerManager: ObservableObject {
                 """
                 return .ok(.html(html))
             }
-        }
-        
-        do {
-            try server.start(in_port_t(port))
-            print("Server started at port \(port)")
-            status = "server is running"
-        } catch {
-            print("Unable to start server: \(error)")
-            status = "unable to start the server"
         }
     }
     
