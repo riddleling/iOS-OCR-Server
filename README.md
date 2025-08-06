@@ -23,7 +23,7 @@ curl -H "Accept: application/json" \
 
 ## Use cases
 
-- Build an OCR cluster using iPhones
+- Building an OCR cluster using iPhones
 
 
 ## License
