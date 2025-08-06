@@ -10,11 +10,28 @@ import SwiftUI
 struct ContentView: View {
     @ObservedObject var serverManager: ServerManager
     @State private var isRefreshing = false
-    @State private var lastRefreshTime = Date()
+    @State private var showingReadme = false
     
     var body: some View {
         VStack {
             HStack {
+                Button(action: openReadme) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "text.page")
+                            .font(.title3)
+                        Text("README")
+                            .font(.headline)
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                }
+                .background(Color.green)
+                .cornerRadius(8)
+                
+                Spacer()
+                    .frame(width: 12)
+                
                 Button(action: refreshNetworkAddresses) {
                     HStack(spacing: 8) {
                         if isRefreshing {
@@ -31,9 +48,9 @@ struct ContentView: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
-                    .background(isRefreshing ? Color.gray.opacity(0.7) : Color.blue.opacity(0.7))
-                    .cornerRadius(8)
                 }
+                .background(isRefreshing ? Color.gray.opacity(0.7) : Color.blue.opacity(0.7))
+                .cornerRadius(8)
                 .disabled(isRefreshing)
             }
             .padding(.bottom, 50)
@@ -64,6 +81,13 @@ struct ContentView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black)
+        .sheet(isPresented: $showingReadme) {
+            ReadmeView()
+        }
+    }
+        
+    private func openReadme()  {
+    showingReadme = true
     }
     
     private func refreshNetworkAddresses() {
@@ -73,7 +97,6 @@ struct ContentView: View {
             serverManager.refreshNetworkAddresses()
             
             withAnimation(.easeInOut(duration: 0.3)) {
-                lastRefreshTime = Date()
                 isRefreshing = false
             }
         }

@@ -1,6 +1,6 @@
-# iOS OCR Server
+# OCR Server
 
-iOS OCR Server, using Apple's Vision Framework API.
+OCR Server, using Apple's Vision Framework API.
 
 ![image](image.jpg)
 

@@ -77,9 +77,41 @@ class ServerManager: ObservableObject {
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>OCR Server</title>
+                <style>
+                    code {
+                        background: #dadada;
+                        padding: 2px 6px;
+                        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+                        font-size: 0.85em;
+                        font-weight: 600;
+                        border-radius: 5px;
+                    }
+                    pre {
+                        background: #dadada;
+                        padding: 16px;
+                        overflow: auto;
+                        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+                        font-size: 0.85em;
+                        line-height: 1.45;
+                        border-radius: 5px;
+                    }
+                    pre code {
+                        background: transparent;
+                        padding: 0;
+                        font-size: inherit;
+                        color: inherit;
+                        font-weight: normal;
+                    }
+                </style>
             </head>
             <body>
                 <h1>OCR Server</h1>
+                <h3>Upload an image via <code>upload</code> API:</h3>
+                <pre><code>curl -H "Accept: application/json" \\
+              -X POST http://&lt;YOUR IP&gt;:8000/upload \\
+              -F "file=@01.png"</code></pre>
+                <hr>
+                <h3>OCR Test:</h3>
                 <form action="/upload" method="post" enctype="multipart/form-data">
                     <label>
                         Choose file:
@@ -123,7 +155,7 @@ class ServerManager: ObservableObject {
                     <title>OCR Server</title>
                 </head>
                 <body>
-                    <h1>OCR Result:</h1>
+                    <h2>OCR Result:</h2>
                     <p>\(result)</p>
                 </body>
                 </html>
