@@ -26,7 +26,7 @@ struct ContentView: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
                 }
-                .background(Color.green)
+                .background(Color.green.opacity(0.7))
                 .cornerRadius(8)
                 
                 Spacer()
@@ -87,7 +87,7 @@ struct ContentView: View {
     }
         
     private func openReadme()  {
-    showingReadme = true
+        showingReadme = true
     }
     
     private func refreshNetworkAddresses() {
@@ -132,6 +132,8 @@ struct NetworkInterfaceView: View {
             
             Text(address)
                 .font(.title)
+                .minimumScaleFactor(0.5)
+                .lineLimit(1)
                 .foregroundColor(.white)
                 .padding(5)
         }
