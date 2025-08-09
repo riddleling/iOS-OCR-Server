@@ -9,12 +9,24 @@ import Foundation
 import Vision
 
 class TextRecognizer {
+    let recognitionLevel : VNRequestTextRecognitionLevel
+    let usesLanguageCorrection : Bool
+    let automaticallyDetectsLanguage : Bool
+    
+    init(recognitionLevel: VNRequestTextRecognitionLevel = .accurate,
+         usesLanguageCorrection: Bool = true,
+         automaticallyDetectsLanguage: Bool = true) {
+        self.recognitionLevel = recognitionLevel
+        self.usesLanguageCorrection = usesLanguageCorrection
+        self.automaticallyDetectsLanguage = automaticallyDetectsLanguage
+    }
+    
     func getOcrResult(data: Data) -> String? {
         let request = VNRecognizeTextRequest()
         request.revision = VNRecognizeTextRequestRevision3
-        request.recognitionLevel = .accurate
-        request.usesLanguageCorrection = true
-        request.automaticallyDetectsLanguage = true
+        request.recognitionLevel = self.recognitionLevel
+        request.usesLanguageCorrection = self.usesLanguageCorrection
+        request.automaticallyDetectsLanguage = self.automaticallyDetectsLanguage
         
         let handler = VNImageRequestHandler(data: data, options: [:])
         

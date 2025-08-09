@@ -11,6 +11,7 @@ struct ContentView: View {
     @ObservedObject var serverManager: ServerManager
     @State private var isRefreshing = false
     @State private var showingReadme = false
+    @State private var showingSettings = false
     
     var body: some View {
         VStack {
@@ -81,9 +82,28 @@ struct ContentView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black)
+        .overlay(
+            VStack(spacing: 0) {
+                Button(action: openSettings) {
+                    Image(systemName: "gearshape")
+                        .font(.title2)
+                        .foregroundColor(.white)
+                }
+            }
+            .padding(.top, 24)
+            .padding(.trailing, 20),
+            alignment: .topTrailing
+        )
         .sheet(isPresented: $showingReadme) {
             ReadmeView()
         }
+        .sheet(isPresented: $showingSettings) {
+            SettingsView(serverManager: serverManager)
+        }
+    }
+    
+    private func openSettings()  {
+        showingSettings = true
     }
         
     private func openReadme()  {

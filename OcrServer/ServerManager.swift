@@ -7,32 +7,52 @@
 
 import Foundation
 import Swifter
+import Vision
 
 class ServerManager: ObservableObject {
     let server = HttpServer()
-    let port = 8000
     let networkInterfaces = ["en0", "en1", "en2", "en3", "en4", "en5"]
+    var port = 8000
+    
+    private var recognitionLevel : VNRequestTextRecognitionLevel = .accurate
+    private var usesLanguageCorrection : Bool = true
+    private var automaticallyDetectsLanguage : Bool = true
     
     @Published var status: String = ""
     @Published var networkAddresses: [String: String] = [:]
+    @Published var isRestarting = false
     
     
     init() {
         startServer()
     }
     
+    func stopServer() {
+        DispatchQueue.main.async {
+            self.isRestarting = true
+        }
+        server.stop()
+    }
+    
     // 啟動伺服器
     private func startServer() {
+        setupParameters()
         setupRoutes()
         do {
             try server.start(in_port_t(port))
             print("Server started at port \(port)")
-            status = "server is running"
-            refreshNetworkAddresses()
+            DispatchQueue.main.async {
+                self.status = "server is running"
+                self.refreshNetworkAddresses()
+                self.isRestarting = false
+            }
             monitorServer()
         } catch {
             print("Unable to start server: \(error)")
-            status = "unable to start the server"
+            DispatchQueue.main.async {
+                self.status = "unable to start the server"
+                self.isRestarting = false
+            }
         }
     }
     
@@ -53,6 +73,20 @@ class ServerManager: ObservableObject {
                 }
             }
         }
+    }
+
+    func setupParameters() {
+        self.port = Settings.shared.httpPort
+        switch Settings.shared.recognitionLevel {
+        case "Accurate":
+            self.recognitionLevel = .accurate
+        case "Fast":
+            self.recognitionLevel = .fast
+        default:
+            self.recognitionLevel = .accurate
+        }
+        self.usesLanguageCorrection = Settings.shared.languageCorrection
+        self.automaticallyDetectsLanguage = Settings.shared.automaticallyDetectsLanguage
     }
     
     func refreshNetworkAddresses() {
@@ -136,7 +170,11 @@ class ServerManager: ObservableObject {
             
             let data = Data(filePart.body)
             
-            let textRecognizer = TextRecognizer()
+            let textRecognizer = TextRecognizer(
+                recognitionLevel: self.recognitionLevel,
+                usesLanguageCorrection: self.usesLanguageCorrection,
+                automaticallyDetectsLanguage: self.automaticallyDetectsLanguage
+            )
             let rawText = textRecognizer.getOcrResult(data: data) ?? ""
             
             let acceptHeader = req.headers["accept"]?.lowercased() ?? ""
