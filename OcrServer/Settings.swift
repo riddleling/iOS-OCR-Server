@@ -26,27 +26,10 @@ class Settings {
     
     var recognitionLevel: String {
         get {
-//            let level = UserDefaults.standard.string(forKey: "recognitionLevel") ?? "Accurate"
-//            switch level {
-//            case "Accurate":
-//                return .accurate
-//            case "Fast":
-//                return .fast
-//            default:
-//                return .accurate
-//            }
             return UserDefaults.standard.string(forKey: "recognitionLevel") ?? "Accurate"
         }
         set {
             UserDefaults.standard.set(newValue, forKey: "recognitionLevel")
-//            switch newValue {
-//            case .accurate:
-//                UserDefaults.standard.set(newValue, forKey: "Accurate")
-//            case .fast:
-//                UserDefaults.standard.set(newValue, forKey: "Fast")
-//            default:
-//                UserDefaults.standard.set(newValue, forKey: "Accurate")
-//            }
         }
     }
     
