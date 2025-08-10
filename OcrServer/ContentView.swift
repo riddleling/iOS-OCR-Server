@@ -12,6 +12,7 @@ struct ContentView: View {
     @State private var isRefreshing = false
     @State private var showingReadme = false
     @State private var showingSettings = false
+    @State private var showingMonitor = false
     
     var body: some View {
         VStack {
@@ -83,12 +84,20 @@ struct ContentView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black)
         .overlay(
-            VStack(spacing: 0) {
-                Button(action: openSettings) {
-                    Image(systemName: "gearshape")
-                        .font(.title2)
-                        .foregroundColor(.white)
-                }
+            Button(action: openMonitor) {
+                Image(systemName: "waveform.path.ecg.rectangle")
+                    .font(.title2)
+                    .foregroundColor(.white)
+            }
+            .padding(.top, 24)
+            .padding(.leading, 20),
+            alignment: .topLeading
+        )
+        .overlay(
+            Button(action: openSettings) {
+                Image(systemName: "gearshape")
+                    .font(.title2)
+                    .foregroundColor(.white)
             }
             .padding(.top, 24)
             .padding(.trailing, 20),
@@ -97,9 +106,16 @@ struct ContentView: View {
         .sheet(isPresented: $showingReadme) {
             ReadmeView()
         }
+        .sheet(isPresented: $showingMonitor) {
+            DashboardView()
+        }
         .sheet(isPresented: $showingSettings) {
             SettingsView(serverManager: serverManager)
         }
+    }
+    
+    private func openMonitor()  {
+        showingMonitor = true
     }
     
     private func openSettings()  {
