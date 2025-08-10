@@ -36,7 +36,7 @@ struct DashboardView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: { sampler.clear() }) {
-                        Image(systemName: "arrow.clockwise")
+                        Image(systemName: "arrow.clockwise.circle")
                     }
                 }
                 ToolbarItem(placement: .navigationBarLeading) {
