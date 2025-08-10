@@ -23,6 +23,11 @@ final class SystemMonitor: ObservableObject {
     private let pathMonitor = NWPathMonitor()
     private let pathQueue = DispatchQueue(label: "hmonitor.path")
     @Published private(set) var currentPathStatus: NWPath.Status = .requiresConnection
+    
+    // Battery (event-driven)
+    @Published private(set) var currentBatteryLevel: Float?
+    @Published private(set) var currentBatteryState: UIDevice.BatteryState = .unknown
+
 
     init() {
         pathMonitor.pathUpdateHandler = { [weak self] path in
@@ -31,19 +36,40 @@ final class SystemMonitor: ObservableObject {
         pathMonitor.start(queue: pathQueue)
 
         UIDevice.current.isBatteryMonitoringEnabled = true
+        
+        DispatchQueue.main.async {
+            UIDevice.current.isBatteryMonitoringEnabled = true
+            let level = UIDevice.current.batteryLevel
+            self.currentBatteryLevel = level >= 0 ? level : nil
+            self.currentBatteryState = UIDevice.current.batteryState
+        }
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(batteryLevelDidChange),
+            name: UIDevice.batteryLevelDidChangeNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(batteryStateDidChange),
+            name: UIDevice.batteryStateDidChangeNotification,
+            object: nil
+        )
     }
 
-    deinit { pathMonitor.cancel() }
+    deinit {
+        pathMonitor.cancel()
+        NotificationCenter.default.removeObserver(self)
+    }
 
     func readSnapshot(appInfo: AppMonitor.AppInfo) -> ResourceSnapshot {
         let cpu = readCPUTotalUsage()
         let mem = readMemory()
         let thermal = ProcessInfo.processInfo.thermalState
         let (avail, total) = readDisk()
-        let batteryLevel = UIDevice.current.batteryLevel >= 0 ? UIDevice.current.batteryLevel : nil
-        let batteryState = UIDevice.current.batteryState
         let net = currentPathStatus
-
+        
         return ResourceSnapshot(
             timestamp: Date(),
             cpuTotal: cpu,
@@ -51,8 +77,8 @@ final class SystemMonitor: ObservableObject {
             memoryFree: mem.free,
             memoryTotal: mem.total,
             thermalState: thermal,
-            batteryLevel: batteryLevel,
-            batteryState: batteryState,
+            batteryLevel: currentBatteryLevel,
+            batteryState: currentBatteryState,
             diskAvailable: avail,
             diskTotal: total,
             networkStatus: net,
@@ -139,6 +165,19 @@ extension SystemMonitor {
             return (available, total)
         } catch {
             return (nil, nil)
+        }
+    }
+    
+    @objc private func batteryLevelDidChange() {
+        DispatchQueue.main.async {
+            let level = UIDevice.current.batteryLevel
+            self.currentBatteryLevel = level >= 0 ? level : nil
+        }
+    }
+
+    @objc private func batteryStateDidChange() {
+        DispatchQueue.main.async {
+            self.currentBatteryState = UIDevice.current.batteryState
         }
     }
 }
