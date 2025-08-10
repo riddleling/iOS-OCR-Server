@@ -34,8 +34,6 @@ final class SystemMonitor: ObservableObject {
             DispatchQueue.main.async { self?.currentPathStatus = path.status }
         }
         pathMonitor.start(queue: pathQueue)
-
-        UIDevice.current.isBatteryMonitoringEnabled = true
         
         DispatchQueue.main.async {
             UIDevice.current.isBatteryMonitoringEnabled = true
