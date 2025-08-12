@@ -12,6 +12,9 @@ OCR Server, using Apple's Vision Framework API.
 4. Can also be integrated into your applications via API interface
 
 - **OCR Test: Open a web browser on your computer and navigate to the IP address displayed by this app to perform an OCR test.**
+
+![image2](image2.png)
+
 - **API Example: Upload an image via `upload` API:**
 
   ```
