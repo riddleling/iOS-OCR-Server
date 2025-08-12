@@ -11,9 +11,9 @@ OCR Server, using Apple's Vision Framework API.
 3. Upload images to get text recognition results
 4. Can also be integrated into your applications via API interface
 
-### OCR Test: Open a web browser on your computer and navigate to the IP address displayed by this app to perform an OCR test.
+### - OCR Test: Open a web browser on your computer and navigate to the IP address displayed by this app to perform an OCR test.
 
-### API Example: Upload an image via `upload` API:
+### - API Example: Upload an image via `upload` API:
 
 ```
 curl -H "Accept: application/json" \
