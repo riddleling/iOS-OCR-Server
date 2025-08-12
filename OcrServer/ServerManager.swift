@@ -142,7 +142,7 @@ class ServerManager: ObservableObject {
                 <h1>OCR Server</h1>
                 <h3>Upload an image via <code>upload</code> API:</h3>
                 <pre><code>curl -H "Accept: application/json" \\
-              -X POST http://&lt;YOUR IP&gt;:8000/upload \\
+              -X POST http://&lt;YOUR IP&gt;:\(self.port)/upload \\
               -F "file=@01.png"</code></pre>
                 <hr>
                 <h3>OCR Test:</h3>
