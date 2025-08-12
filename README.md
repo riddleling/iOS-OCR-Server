@@ -6,13 +6,15 @@ OCR Server, using Apple's Vision Framework API.
 
 ## How to use
 
-After launching the app, you can upload images from the home page or upload them via the `upload` API
-
-```
-curl -H "Accept: application/json" \
-  -X POST http://<YOUR IP>:8000/upload \
-  -F "file=@01.png"
-```
+1. Launch the app and the server will start automatically
+2. Access the displayed IP address from any device on the same network
+3. Upload images to get text recognition results
+4. Can also be integrated into your applications via API interface
+  ```
+  curl -H "Accept: application/json" \
+    -X POST http://<YOUR IP>:8000/upload \
+    -F "file=@01.png"
+  ```
 
 
 ## Features
