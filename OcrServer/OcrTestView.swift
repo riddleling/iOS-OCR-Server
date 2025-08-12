@@ -1,8 +1,14 @@
+//
+//  OcrTestView.swift
+//  OcrServer
+//
+//  Created by Riddle Ling on 2025/8/12.
+//
+
 import SwiftUI
 
-// MARK: - README View
-struct ReadmeView: View {
-    let readmeURL = URL(string: "https://github.com/riddleling/iOS-OCR-Server/blob/main/README.md")!
+struct OcrTestView: View {
+    let url : String
     @Environment(\.dismiss) private var dismiss
     @State private var isLoading = false
     @State private var progress: Double = 0.0
@@ -18,9 +24,12 @@ struct ReadmeView: View {
                 }
                 
                 // WebView
-                WebView(url: readmeURL, isLoading: $isLoading, progress: $progress)
+                WebView(url: URL(string: url)!,
+                        isLoading: $isLoading,
+                        progress: $progress
+                )
             }
-            .navigationTitle("README")
+            .navigationTitle(url)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {

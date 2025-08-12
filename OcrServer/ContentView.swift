@@ -159,6 +159,7 @@ struct ContentView: View {
 struct NetworkInterfaceView: View {
     let title: String
     let address: String
+    @State private var showingOcrTestView = false
     
     var body: some View {
         VStack(spacing: 5) {
@@ -166,13 +167,23 @@ struct NetworkInterfaceView: View {
                 .font(.headline)
                 .foregroundColor(.white)
             
-            Text(address)
-                .font(.title)
-                .minimumScaleFactor(0.5)
-                .lineLimit(1)
-                .foregroundColor(.white)
-                .padding(5)
+            Button(action: openWebView) {
+                Text(address)
+                    .font(.title)
+                    .minimumScaleFactor(0.5)
+                    .lineLimit(1)
+                    .foregroundColor(.white)
+                    .underline()
+                    .padding(5)
+            }
         }
+        .sheet(isPresented: $showingOcrTestView) {
+            OcrTestView(url: address)
+        }
+    }
+    
+    private func openWebView() {
+        showingOcrTestView = true
     }
 }
 
