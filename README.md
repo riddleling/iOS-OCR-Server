@@ -2,6 +2,8 @@
 
 OCR Server, using Apple's Vision Framework API.
 
+Download from the [App Store](https://apps.apple.com/us/app/ocr-server/id6749533041)
+
 ![image](image.jpg)
 
 ## How to use
