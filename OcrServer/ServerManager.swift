@@ -160,12 +160,13 @@ class ServerManager: ObservableObject {
             return .ok(.html(html))
         }
         
-        server["/upload"] = { req in
+        server.post["/upload"] = { req in
             let multipart = req.parseMultiPartFormData()
             
             guard let filePart = multipart.first(where: { $0.name == "file" }),
                 !filePart.body.isEmpty else {
-                return .badRequest(.text("Missing or empty 'file' part"))
+                let jsonDict = ["success": false, "message": "Missing or empty 'file' part", "ocr_result": ""]
+                return .badRequest(.json(jsonDict))
             }
             
             let data = Data(filePart.body)
@@ -180,10 +181,10 @@ class ServerManager: ObservableObject {
             let acceptHeader = req.headers["accept"]?.lowercased() ?? ""
             
             if acceptHeader.contains("application/json") {
-                let jsonDict = ["ocr_result": rawText]
+                let jsonDict = ["success": true, "message": "File uploaded successfully", "ocr_result": rawText]
                 return .ok(.json(jsonDict))
             } else {
-                let result = self.htmlEscape(rawText).replacingOccurrences(of: "\n", with: "<br>")
+                let result = self.htmlEscape(rawText)
                 let html = """
                 <!doctype html>
                 <html>
@@ -194,7 +195,7 @@ class ServerManager: ObservableObject {
                 </head>
                 <body>
                     <h2>OCR Result:</h2>
-                    <p>\(result)</p>
+                    <pre>\(result)</pre>
                 </body>
                 </html>
                 """
