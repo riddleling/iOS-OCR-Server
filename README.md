@@ -35,8 +35,3 @@ Download from the [App Store](https://apps.apple.com/us/app/ocr-server/id6749533
 ## Use cases
 
 - Building an OCR cluster using iPhones
-
-
-## License
-
-MIT License
