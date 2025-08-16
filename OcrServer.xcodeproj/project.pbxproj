@@ -8,10 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		25B2C6FD2E3CF32F00B4A7C9 /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = 25B2C6FC2E3CF32F00B4A7C9 /* Swifter */; };
+		25DDFFCB2E4F698F00796897 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 25DDFFCA2E4F698E00796897 /* StoreKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		25B2C6ED2E3CF13400B4A7C9 /* OcrServer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OcrServer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		25DDFFCA2E4F698E00796897 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -28,6 +30,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				25B2C6FD2E3CF32F00B4A7C9 /* Swifter in Frameworks */,
+				25DDFFCB2E4F698F00796897 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -38,6 +41,7 @@
 			isa = PBXGroup;
 			children = (
 				25B2C6EF2E3CF13400B4A7C9 /* OcrServer */,
+				25DDFFC92E4F698E00796897 /* Frameworks */,
 				25B2C6EE2E3CF13400B4A7C9 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -48,6 +52,14 @@
 				25B2C6ED2E3CF13400B4A7C9 /* OcrServer.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		25DDFFC92E4F698E00796897 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				25DDFFCA2E4F698E00796897 /* StoreKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

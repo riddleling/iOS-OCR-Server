@@ -13,6 +13,7 @@ struct ContentView: View {
     @State private var showingReadme = false
     @State private var showingSettings = false
     @State private var showingMonitor = false
+    @State private var showingDonation = false
     
     var body: some View {
         VStack {
@@ -84,8 +85,8 @@ struct ContentView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black)
         .overlay(
-            Button(action: openMonitor) {
-                Image(systemName: "waveform.path.ecg.rectangle")
+            Button(action: openDonation) {
+                Image(systemName: "cup.and.saucer")
                     .font(.title2)
                     .foregroundColor(.white)
             }
@@ -94,13 +95,24 @@ struct ContentView: View {
             alignment: .topLeading
         )
         .overlay(
-            Button(action: openSettings) {
-                Image(systemName: "gearshape")
-                    .font(.title2)
-                    .foregroundColor(.white)
-            }
-            .padding(.top, 24)
-            .padding(.trailing, 20),
+            HStack {
+                Button(action: openMonitor) {
+                    Image(systemName: "waveform.path.ecg.rectangle")
+                        .font(.title2)
+                        .foregroundColor(.white)
+                }
+                .padding(.top, 24)
+                .padding(.leading, 20)
+                .padding(.trailing, 12)
+                
+                Button(action: openSettings) {
+                    Image(systemName: "gearshape")
+                        .font(.title2)
+                        .foregroundColor(.white)
+                }
+                .padding(.top, 24)
+                .padding(.trailing, 20)
+            },
             alignment: .topTrailing
         )
         .sheet(isPresented: $showingReadme) {
@@ -109,9 +121,16 @@ struct ContentView: View {
         .sheet(isPresented: $showingMonitor) {
             DashboardView()
         }
+        .sheet(isPresented: $showingDonation) {
+            DonationView()
+        }
         .sheet(isPresented: $showingSettings) {
             SettingsView(serverManager: serverManager)
         }
+    }
+    
+    private func openDonation() {
+        showingDonation = true
     }
     
     private func openMonitor()  {
