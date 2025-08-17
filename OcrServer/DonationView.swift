@@ -15,6 +15,7 @@ struct DonationView: View {
     @State private var showingThanks = false
     @State private var thanksMsg = ""
     @State private var isBuying = false
+    @State private var transactionTask: Task<Void, Never>?
     
     let productId = "site.riddleling.app.OcrServer.iap.coffee"
     
@@ -33,7 +34,6 @@ struct DonationView: View {
                 Text("One-time donation")
                     .font(.body)
                     .padding()
-                
                 
                 Button {
                     Task { await buyProduct() }
@@ -82,11 +82,16 @@ struct DonationView: View {
                 await loadProduct()
                 observeTransactions() // 處理可能遺留的交易
             }
+            .onDisappear {
+                transactionTask?.cancel()
+                transactionTask = nil
+            }
             .alert("Thank you!", isPresented: $showingThanks) {
                 Button("OK") { }
             } message: {
                 Text(thanksMsg)
             }
+            
         }
     }
     
@@ -136,7 +141,7 @@ struct DonationView: View {
     }
     
     private func observeTransactions() {
-        Task {
+        transactionTask = Task {
             for await result in Transaction.updates {
                 guard case .verified(let transaction) = result else { continue }
                 // 對於 Consumable，確保 finish，避免重覆提示
