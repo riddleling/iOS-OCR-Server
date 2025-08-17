@@ -25,6 +25,23 @@ Download from the [App Store](https://apps.apple.com/us/app/ocr-server/id6749533
     -F "file=@01.png"
   ```
 
+- **Python Upload Example:**
+
+  ```python
+  import requests
+
+  url = "http://10.0.1.11:8000/upload" # Replace with your IP address
+  file_path = "01.png"
+
+  with open(file_path, "rb") as f:
+      files = {"file": f}
+      headers = {"Accept": "application/json"}
+      response = requests.post(url, files=files, headers=headers)
+
+  print("status code:", response.status_code)
+  print("response:", response.text)
+  ```
+
 
 ## Features
 
