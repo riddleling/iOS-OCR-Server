@@ -17,6 +17,7 @@ class ServerManager: ObservableObject {
     private var recognitionLevel : VNRequestTextRecognitionLevel = .accurate
     private var usesLanguageCorrection : Bool = true
     private var automaticallyDetectsLanguage : Bool = true
+    private var routesConfigured = false
     
     @Published var status: String = ""
     @Published var networkAddresses: [String: String] = [:]
@@ -36,8 +37,12 @@ class ServerManager: ObservableObject {
     
     // 啟動伺服器
     private func startServer() {
+        server.stop()
         setupParameters()
-        setupRoutes()
+        if !routesConfigured {
+            setupRoutes()
+            routesConfigured = true
+        }
         do {
             try server.start(in_port_t(port))
             print("Server started at port \(port)")
@@ -103,7 +108,8 @@ class ServerManager: ObservableObject {
     }
     
     private func setupRoutes() {
-        server["/"] = { _ in
+        server["/"] = { [weak self] _ in
+            guard let self else { return .internalServerError }
             let html = """
             <!doctype html>
             <html>
@@ -160,7 +166,8 @@ class ServerManager: ObservableObject {
             return .ok(.html(html))
         }
         
-        server.post["/upload"] = { req in
+        server.post["/upload"] = { [weak self] req in
+            guard let self else { return .internalServerError }
             let multipart = req.parseMultiPartFormData()
             
             guard let filePart = multipart.first(where: { $0.name == "file" }),
