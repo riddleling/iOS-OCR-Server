@@ -30,7 +30,7 @@ Download from the [App Store](https://apps.apple.com/us/app/ocr-server/id6749533
   ```python
   import requests
 
-  url = "http://10.0.1.11:8000/upload" # Replace with your IP address
+  url = "http://10.0.1.11:8000/upload"  # Replace with your IP address
   file_path = "01.png"
 
   with open(file_path, "rb") as f:
