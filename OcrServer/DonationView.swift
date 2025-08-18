@@ -119,7 +119,7 @@ struct DonationView: View {
                 }
                 // 成功：顯示感謝並 finish（Consumable 必要）
                 print("Purchase successful")
-                thanksMsg = "Thanks for buying me a coffee! I really appreciate your support."
+                thanksMsg = String(localized:"Thanks for buying me a coffee! I really appreciate your support.")
                 showingThanks = true
                 await transaction.finish()
 

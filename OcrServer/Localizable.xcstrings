@@ -602,7 +602,26 @@
       }
     },
     "OK" : {
-
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确定"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確定"
+          }
+        }
+      }
     },
     "One-time donation" : {
       "localizations" : {
@@ -974,6 +993,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "謝謝！"
+          }
+        }
+      }
+    },
+    "Thanks for buying me a coffee! I really appreciate your support." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コーヒーをおごっていただき、ありがとうございます！皆様のサポートを心から感謝しております。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "谢谢您请我喝咖啡！我真的很感谢您的支持。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "謝謝您請我喝咖啡！我真的很感謝您的支持。"
           }
         }
       }
