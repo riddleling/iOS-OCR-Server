@@ -15,7 +15,7 @@ struct RecognitionLevelView: View {
         List {
             ForEach(levels, id: \.self) { level in
                 HStack {
-                    Text(level)
+                    Text(getLevelString(level))
                     Spacer()
                     if level == recognitionLevel {
                         Image(systemName: "checkmark")
@@ -31,5 +31,16 @@ struct RecognitionLevelView: View {
         }
         .navigationTitle("Recognition Level")
         .navigationBarTitleDisplayMode(.inline)
+    }
+    
+    private func getLevelString(_ level: String) -> String {
+        switch level {
+        case "Accurate":
+            return String(localized:"Accurate")
+        case "Fast":
+            return String(localized:"Fast")
+        default:
+            return "Accurate"
+        }
     }
 }

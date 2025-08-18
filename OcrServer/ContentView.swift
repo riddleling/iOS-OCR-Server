@@ -162,7 +162,7 @@ struct ContentView: View {
         if let addr = address {
             return "http://\(addr):\(serverManager.port)"
         }
-        return "No available IP found"
+        return String(localized:"No available IP found")
     }
     
     private func getDisplayName(for interfaceName: String) -> String {
@@ -170,7 +170,7 @@ struct ContentView: View {
         case "en0":
             return "Wifi (en0)"
         default:
-            return "Ethernet (\(interfaceName))"
+            return String(localized:"Ethernet (\(interfaceName))")
         }
     }
 }

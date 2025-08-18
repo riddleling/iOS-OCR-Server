@@ -86,7 +86,7 @@ struct ThermalCard: View {
     }
 
     private func label(for s: ProcessInfo.ThermalState) -> String {
-        switch s { case .nominal: return "Nominal"; case .fair: return "Fair"; case .serious: return "Serious"; case .critical: return "Critical"; @unknown default: return "Unknown" }
+        switch s { case .nominal: return String(localized:"Nominal"); case .fair: return String(localized:"Fair"); case .serious: return String(localized:"Serious"); case .critical: return String(localized:"Critical"); @unknown default: return String(localized:"Unknown") }
     }
     private func color(for s: ProcessInfo.ThermalState) -> Color {
         switch s { case .nominal: return .green; case .fair: return .yellow; case .serious: return .orange; case .critical: return .red; @unknown default: return .gray }
@@ -116,7 +116,7 @@ struct BatteryCard: View {
     }
 
     private func batteryStateName(_ s: UIDevice.BatteryState) -> String {
-        switch s { case .charging: return "Charging"; case .full: return "Full"; case .unplugged: return "Unplugged"; default: return "Unknown" }
+        switch s { case .charging: return String(localized:"Charging"); case .full: return String(localized:"Full"); case .unplugged: return String(localized:"Unplugged"); default: return String(localized:"Unknown") }
     }
 }
 
@@ -146,7 +146,7 @@ struct DiskNetworkCard: View {
     }
 
     private func statusName(_ s: NWPath.Status) -> String {
-        switch s { case .satisfied: return "Online"; case .requiresConnection: return "Requires Connection"; case .unsatisfied: return "Offline"; @unknown default: return "Unknown" }
+        switch s { case .satisfied: return String(localized:"Online"); case .requiresConnection: return String(localized:"Requires Connection"); case .unsatisfied: return String(localized:"Offline"); @unknown default: return String(localized:"Unknown") }
     }
 }
 

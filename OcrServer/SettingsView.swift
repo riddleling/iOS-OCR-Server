@@ -23,15 +23,20 @@ struct SettingsView: View {
                 List {
                     Section("Text Recognition") {
                         ZStack {
-                            SettingsRow(icon: "text.viewfinder", title: "Recognition Level", value: $recognitionLevel)
+                            SettingsRow(icon: "text.viewfinder",
+                                        title: String(localized:"Recognition Level"),
+                                        value: $recognitionLevel)
                             NavigationLink(destination: RecognitionLevelView(recognitionLevel: $recognitionLevel)) {
                                 EmptyView()
                             }
                             .opacity(0)
                         }
-                        //SettingsRow(icon: "text.viewfinder", title: "Recognition Level", value: $recognitionLevel)
-                        SettingsRow2(icon: "text.badge.checkmark", title: "Language Correction", isOn: $languageCorrection)
-                        SettingsRow2(icon: "globe", title: "Auto Detects Language", isOn: $autoDetectLanguage)
+                        SettingsRow2(icon: "text.badge.checkmark",
+                                     title: String(localized:"Language Correction"),
+                                     isOn: $languageCorrection)
+                        SettingsRow2(icon: "globe",
+                                     title: String(localized:"Auto Detects Language"),
+                                     isOn: $autoDetectLanguage)
                     }
                     Section("Server") {
                         SettingsRow(icon: "server.rack", title: "HTTP Port", value: $httpPort)
@@ -135,7 +140,7 @@ struct SettingsRow: View {
         
             Spacer()
             
-            Text(value)
+            Text(getValueString(value))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
             
@@ -146,6 +151,17 @@ struct SettingsRow: View {
         }
         .padding(.vertical, 4)
         .contentShape(Rectangle())
+    }
+    
+    private func getValueString(_ level: String) -> String {
+        switch level {
+        case "Accurate":
+            return String(localized:"Accurate")
+        case "Fast":
+            return String(localized:"Fast")
+        default:
+            return level
+        }
     }
 }
 

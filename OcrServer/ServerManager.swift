@@ -47,7 +47,7 @@ class ServerManager: ObservableObject {
             try server.start(in_port_t(port))
             print("Server started at port \(port)")
             DispatchQueue.main.async {
-                self.status = "server is running"
+                self.status = String(localized: "server is running")
                 self.refreshNetworkAddresses()
                 self.isRestarting = false
             }
@@ -55,7 +55,7 @@ class ServerManager: ObservableObject {
         } catch {
             print("Unable to start server: \(error)")
             DispatchQueue.main.async {
-                self.status = "unable to start the server"
+                self.status = String(localized: "unable to start the server")
                 self.isRestarting = false
             }
         }
@@ -68,7 +68,7 @@ class ServerManager: ObservableObject {
                 sleep(2)
                 if !self.server.operating {
                     DispatchQueue.main.async {
-                        self.status = "server stopped - restarting..."
+                        self.status = String(localized: "server stopped - restarting...")
                     }
                     print("Server stopped unexpectedly. Restarting...")
                     self.server.stop()
