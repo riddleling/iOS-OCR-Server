@@ -20,7 +20,7 @@ Apple の Vision Framework を使用して iPhone を強力なローカル OCR �
 
 ![image2](image2.png)
 
-- **API の例：`upload` API 経由で画像をアップロード：**
+- **API の例 - `upload` API 経由で画像をアップロード：**
 
   ```
   curl -H "Accept: application/json" \

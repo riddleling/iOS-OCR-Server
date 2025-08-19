@@ -20,7 +20,7 @@
 
 ![image2](image2.png)
 
-- **API 範例: 透過 `upload` API 上傳圖像：**
+- **API 範例 - 透過 `upload` API 上傳圖像：**
 
   ```
   curl -H "Accept: application/json" \

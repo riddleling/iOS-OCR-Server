@@ -20,7 +20,7 @@ No cloud dependencies, unlimited usage, complete privacy.
 
 ![image2](image2.png)
 
-- **API Example: Upload an image via `upload` API:**
+- **API Example - Upload an image via `upload` API:**
 
   ```
   curl -H "Accept: application/json" \
