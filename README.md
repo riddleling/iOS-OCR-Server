@@ -13,7 +13,7 @@ Download from the [App Store](https://apps.apple.com/us/app/ocr-server/id6749533
 3. Upload images to get text recognition results
 4. Integrate the service into your applications via API
 
-- **OCR Test: Open a web browser on your computer and navigate to the IP address displayed by this app to perform an OCR test.**
+- **OCR Test: On your computer, open a web browser and navigate to the IP address displayed by the app to perform an OCR test.**
 
 ![image2](image2.png)
 
