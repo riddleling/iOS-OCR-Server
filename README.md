@@ -7,7 +7,7 @@ Download from the [App Store](https://apps.apple.com/us/app/ocr-server/id6749533
 
 ![image](image.jpg)
 
-## How to use
+## How to Use
 
 1. Launch the app and the server will start automatically
 2. Access the displayed IP address from any device on the same network
@@ -46,10 +46,15 @@ Download from the [App Store](https://apps.apple.com/us/app/ocr-server/id6749533
 
 ## Features
 
-- Upload images through a web interface to instantly get OCR results
-- Provide an upload API that returns OCR results in JSON format
+- High-precision OCR powered by Apple’s Vision Framework
+- Supports multiple languages with automatic detection
+- Upload via web interface and receive OCR results within seconds
+- JSON API for easy integration into apps
+- 100% local processing, no cloud, full privacy
 
 
-## Use cases
+## Use Cases
 
+- Local OCR without cloud services
+- Share OCR services across devices in the same network
 - Build an OCR processing cluster using multiple iPhones
