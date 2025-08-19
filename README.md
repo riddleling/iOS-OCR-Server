@@ -45,10 +45,10 @@ Download from the [App Store](https://apps.apple.com/us/app/ocr-server/id6749533
 
 ## Features
 
-- Upload images through a web page and return the OCR results
+- Upload images through a web interface to instantly get OCR results
 - Provide an upload API that returns OCR results in JSON format
 
 
 ## Use cases
 
-- Building an OCR cluster using iPhones
+- Build an OCR processing cluster using multiple iPhones
