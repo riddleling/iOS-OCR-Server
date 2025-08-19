@@ -1,6 +1,7 @@
 # OCR Server
 
-OCR Server, using Apple's Vision Framework API.
+Turn your iPhone into a powerful local OCR server using Apple's Vision Framework. 
+No cloud dependencies, unlimited usage, complete privacy.
 
 Download from the [App Store](https://apps.apple.com/us/app/ocr-server/id6749533041)
 
