@@ -5,6 +5,8 @@ Apple の Vision Framework を使用して iPhone を強力なローカル OCR �
 
 [App Store からダウンロード](https://apps.apple.com/us/app/ocr-server/id6749533041)
 
+[English](README.md) | **日本語** | [繁體中文](README.zh-TW.md) | [简体中文](README.zh-CN.md)
+
 ![image](image.jpg)
 
 ## 使用方法

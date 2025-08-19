@@ -5,6 +5,8 @@
 
 [從 App Store 下載](https://apps.apple.com/us/app/ocr-server/id6749533041)
 
+[English](README.md) | [日本語](README.ja.md) | **繁體中文** | [简体中文](README.zh-CN.md)
+
 ![image](image.jpg)
 
 ## 使用方法
@@ -22,7 +24,7 @@
 
   ```
   curl -H "Accept: application/json" \
-    -X POST http://<YOUR IP>:8000/upload \
+    -X POST http://<您的IP>:8000/upload \
     -F "file=@01.png"
   ```
 
