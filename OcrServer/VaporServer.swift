@@ -14,6 +14,9 @@ actor VaporServer {
     
     // 自動重啟設定
     private var shouldAutoRestart = true
+    
+    // 當伺服器停止時發通知
+    private var onStopped: (@Sendable () -> Void)?
 
     let host: String = "0.0.0.0"
     let environment: Environment = .production
@@ -30,6 +33,11 @@ actor VaporServer {
 
     // MARK: - Public API
 
+    // 設定停止時回呼
+    func setOnStopped(_ handler: @escaping @Sendable () -> Void) {
+        self.onStopped = handler
+    }
+    
     // 開關自動重啟
     func setAutoRestart(_ enabled: Bool) {
         self.shouldAutoRestart = enabled
@@ -56,6 +64,9 @@ actor VaporServer {
             } catch {
                 hadError = true
             }
+            
+            // 通知外界「已停止」
+            if let cb = await self.onStopped { cb() }
             
             // 依設定自動重啟
             if await self.shouldAutoRestart && hadError {

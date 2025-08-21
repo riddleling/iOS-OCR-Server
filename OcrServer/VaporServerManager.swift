@@ -45,6 +45,14 @@ final class VaporServerManager: ObservableObject {
             // 開啟 Server 啟動失敗自動重啟
             await server.setAutoRestart(true)
             
+            // Server 停止時更新 status 文字
+            await server.setOnStopped { [weak self] in
+                guard let self else { return }
+                Task { @MainActor in
+                    self.status = String(localized:"server stopped")
+                }
+            }
+            
             do {
                 try await server.start()
                 status = String(localized: "server is running")
