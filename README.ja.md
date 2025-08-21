@@ -43,6 +43,8 @@ Apple の Vision Framework を使用して iPhone を強力なローカル OCR �
 
   print("status code:", response.status_code)
   print("response:", response.text)
+
+  # response: {"message":"File uploaded successfully", "ocr_result":"Hello World!", "success":true}
   ```
 
 
