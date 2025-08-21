@@ -21,30 +21,6 @@ class TextRecognizer {
         self.automaticallyDetectsLanguage = automaticallyDetectsLanguage
     }
     
-//    func getOcrResult(data: Data) -> String? {
-//        let request = VNRecognizeTextRequest()
-//        request.revision = VNRecognizeTextRequestRevision3
-//        request.recognitionLevel = self.recognitionLevel
-//        request.usesLanguageCorrection = self.usesLanguageCorrection
-//        request.automaticallyDetectsLanguage = self.automaticallyDetectsLanguage
-//        
-//        let handler = VNImageRequestHandler(data: data, options: [:])
-//        
-//        try? handler.perform([request])
-//        
-//        guard let observations = request.results else {
-//            return nil
-//        }
-//        
-//        var result = ""
-//        for observation in observations {
-//            if let candidate = observation.topCandidates(1).first {
-//                result += "\(candidate.string)\n"
-//            }
-//        }
-//        return result
-//    }
-    
     func getOcrResult(data: Data) async -> String? {
         var request = RecognizeTextRequest()
         request.recognitionLevel = self.recognitionLevel
