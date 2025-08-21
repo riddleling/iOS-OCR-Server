@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @ObservedObject var serverManager: ServerManager
+    @ObservedObject var serverManager: VaporServerManager
     @Environment(\.dismiss) private var dismiss
     @State var recognitionLevel = Settings.shared.recognitionLevel
     @State var languageCorrection = Settings.shared.languageCorrection
@@ -114,7 +114,7 @@ struct SettingsView: View {
     }
     
     private func apply() {
-        serverManager.stopServer()
+        serverManager.restartServer()
     }
     
     

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @ObservedObject var serverManager: ServerManager
+    @ObservedObject var serverManager: VaporServerManager
     @State private var isRefreshing = false
     @State private var showingReadme = false
     @State private var showingSettings = false
@@ -155,7 +155,6 @@ struct ContentView: View {
                 isRefreshing = false
             }
         }
-        
     }
     
     private func getAddressString(for address: String?) -> String {
@@ -208,7 +207,7 @@ struct NetworkInterfaceView: View {
 
 #Preview {
     ContentView(
-        serverManager: ServerManager()
+        serverManager: VaporServerManager()
     )
 }
 

@@ -9,7 +9,7 @@ import SwiftUI
 
 @main
 struct OcrServerApp: App {
-    @StateObject private var serverManager = ServerManager()
+    @StateObject private var serverManager = VaporServerManager()
     
     var body: some Scene {
         WindowGroup {

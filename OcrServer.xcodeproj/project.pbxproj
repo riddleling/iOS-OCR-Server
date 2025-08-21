@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		25B2C6FD2E3CF32F00B4A7C9 /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = 25B2C6FC2E3CF32F00B4A7C9 /* Swifter */; };
+		25DD00182E574A5300796897 /* Vapor in Frameworks */ = {isa = PBXBuildFile; productRef = 25DD00172E574A5300796897 /* Vapor */; };
 		25DDFFCB2E4F698F00796897 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 25DDFFCA2E4F698E00796897 /* StoreKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -29,7 +29,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				25B2C6FD2E3CF32F00B4A7C9 /* Swifter in Frameworks */,
+				25DD00182E574A5300796897 /* Vapor in Frameworks */,
 				25DDFFCB2E4F698F00796897 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -82,7 +82,7 @@
 			);
 			name = OcrServer;
 			packageProductDependencies = (
-				25B2C6FC2E3CF32F00B4A7C9 /* Swifter */,
+				25DD00172E574A5300796897 /* Vapor */,
 			);
 			productName = OcrServer;
 			productReference = 25B2C6ED2E3CF13400B4A7C9 /* OcrServer.app */;
@@ -116,7 +116,7 @@
 			mainGroup = 25B2C6E42E3CF13300B4A7C9;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				25B2C6FB2E3CF32F00B4A7C9 /* XCRemoteSwiftPackageReference "swifter" */,
+				25DD00162E574A5300796897 /* XCRemoteSwiftPackageReference "vapor" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 25B2C6EE2E3CF13400B4A7C9 /* Products */;
@@ -360,21 +360,21 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		25B2C6FB2E3CF32F00B4A7C9 /* XCRemoteSwiftPackageReference "swifter" */ = {
+		25DD00162E574A5300796897 /* XCRemoteSwiftPackageReference "vapor" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/httpswift/swifter";
+			repositoryURL = "https://github.com/vapor/vapor.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.5.0;
+				minimumVersion = 4.115.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		25B2C6FC2E3CF32F00B4A7C9 /* Swifter */ = {
+		25DD00172E574A5300796897 /* Vapor */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 25B2C6FB2E3CF32F00B4A7C9 /* XCRemoteSwiftPackageReference "swifter" */;
-			productName = Swifter;
+			package = 25DD00162E574A5300796897 /* XCRemoteSwiftPackageReference "vapor" */;
+			productName = Vapor;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
