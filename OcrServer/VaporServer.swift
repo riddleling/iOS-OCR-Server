@@ -83,12 +83,10 @@ actor VaporServer {
     func running() -> Bool { isRunning }
     
     func configure(
-        host: String? = nil,
         port: Int? = nil,
         recognitionLevel: RecognizeTextRequest.RecognitionLevel? = nil,
         usesLanguageCorrection: Bool? = nil,
         automaticallyDetectsLanguage: Bool? = nil,
-        environment: Environment? = nil
     ) {
         if let v = port { self.port = v }
         if let v = recognitionLevel { self.recognitionLevel = v }
