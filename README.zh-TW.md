@@ -5,7 +5,7 @@
 
 [從 App Store 下載](https://apps.apple.com/us/app/ocr-server/id6749533041)
 
-[English](README.md) | [日本語](README.ja.md) | **繁體中文** | [简体中文](README.zh-CN.md)
+[English](README.md) | [日本語](README.ja.md) | **繁體中文** | [简体中文](README.zh-CN.md) | [한국어](README.ko.md) | [Français](README.fr.md)
 
 ![image](image.jpg)
 

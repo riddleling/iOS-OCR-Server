@@ -5,7 +5,7 @@ No cloud dependencies, unlimited usage, complete privacy.
 
 [Download from the App Store](https://apps.apple.com/us/app/ocr-server/id6749533041)
 
-**English** | [日本語](README.ja.md) | [繁體中文](README.zh-TW.md) | [简体中文](README.zh-CN.md)
+**English** | [日本語](README.ja.md) | [繁體中文](README.zh-TW.md) | [简体中文](README.zh-CN.md) | [한국어](README.ko.md) | [Français](README.fr.md)
 
 ![image](image.jpg)
 
@@ -15,7 +15,7 @@ No cloud dependencies, unlimited usage, complete privacy.
 2. Access the displayed IP address from any device on the same network
 3. Upload images to get text recognition results
 4. Integrate the service into your applications via API
-5. To ensure the app runs continuously without interruption, please enable iOS [Guided Access](https://support.apple.com/en-us/111795) mode and keep the screen on.
+5. To ensure the app runs continuously without interruption, please enable iOS [Guided Access](https://support.apple.com/en-us/111795) mode and keep the screen on
 
 - **OCR Test: On your computer, open a web browser and navigate to the IP address displayed by the app to perform an OCR test.**
 
