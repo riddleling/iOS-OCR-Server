@@ -34,12 +34,10 @@ struct DashboardView: View {
             .navigationTitle("Monitor")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItemGroup(placement: .navigationBarLeading) {
                     Button(action: { sampler.clear() }) {
                         Image(systemName: "arrow.clockwise.circle")
                     }
-                }
-                ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: toggleSampling) {
                         Image(systemName: sampler.isRunning ? "pause.circle" : "play.circle")
                     }
