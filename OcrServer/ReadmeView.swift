@@ -33,7 +33,6 @@ struct ReadmeView: View {
                         controller.goBack()
                     } label: {
                         Image(systemName: "chevron.backward.circle")
-                            .font(.title2)
                     }
                     .opacity(controller.canGoBack ? 1 : 0)
                     .disabled(!controller.canGoBack)
