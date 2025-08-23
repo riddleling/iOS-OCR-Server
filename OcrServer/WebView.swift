@@ -13,6 +13,7 @@ struct WebView: UIViewRepresentable {
     let url: URL
     @Binding var isLoading: Bool
     @Binding var progress: Double
+    @ObservedObject var controller: WebViewController
     
     func makeUIView(context: Context) -> WKWebView {
         let webView = WKWebView()
@@ -20,6 +21,8 @@ struct WebView: UIViewRepresentable {
         
         // 設置 coordinator 的 webView 引用
         context.coordinator.setWebView(webView)
+        
+        controller.webView = webView
         
         // 觀察進度
         webView.addObserver(context.coordinator, forKeyPath: "estimatedProgress", options: .new, context: nil)
@@ -30,6 +33,13 @@ struct WebView: UIViewRepresentable {
         webView.load(request)
         
         return webView
+    }
+    
+    static func dismantleUIView(_ uiView: WKWebView, coordinator: Coordinator) {
+        // 正確移除 KVO
+        uiView.removeObserver(coordinator, forKeyPath: "estimatedProgress")
+        uiView.removeObserver(coordinator, forKeyPath: "loading")
+        uiView.navigationDelegate = nil
     }
     
     func updateUIView(_ webView: WKWebView, context: Context) {
@@ -61,6 +71,8 @@ struct WebView: UIViewRepresentable {
                 if let webView = object as? WKWebView {
                     DispatchQueue.main.async {
                         self.parent.isLoading = webView.isLoading
+                        self.parent.controller.canGoBack = webView.canGoBack
+                        self.parent.controller.canGoForward = webView.canGoForward
                     }
                 }
             }
@@ -80,15 +92,19 @@ struct WebView: UIViewRepresentable {
             DispatchQueue.main.async {
                 self.parent.isLoading = false
                 self.parent.progress = 1.0
-            }
-        }
-        
-        deinit {
-            // 移除觀察者
-            if let webView = webView {
-                webView.removeObserver(self, forKeyPath: "estimatedProgress")
-                webView.removeObserver(self, forKeyPath: "loading")
+                self.parent.controller.canGoBack = webView.canGoBack
+                self.parent.controller.canGoForward = webView.canGoForward
             }
         }
     }
+}
+
+final class WebViewController: ObservableObject {
+    fileprivate weak var webView: WKWebView?
+
+    @Published var canGoBack = false
+    @Published var canGoForward = false
+
+    func goBack() { webView?.goBack() }
+    func goForward() { webView?.goForward() }
 }

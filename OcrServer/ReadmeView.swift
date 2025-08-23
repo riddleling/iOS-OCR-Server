@@ -6,6 +6,7 @@ struct ReadmeView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var isLoading = false
     @State private var progress: Double = 0.0
+    @StateObject private var controller = WebViewController()
     
     var body: some View {
         NavigationView {
@@ -18,11 +19,25 @@ struct ReadmeView: View {
                 }
                 
                 // WebView
-                WebView(url: readmeURL, isLoading: $isLoading, progress: $progress)
+                WebView(url: readmeURL,
+                        isLoading: $isLoading,
+                        progress: $progress,
+                        controller: controller
+                )
             }
             .navigationTitle("README")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItemGroup(placement: .navigationBarLeading) {
+                    Button {
+                        controller.goBack()
+                    } label: {
+                        Image(systemName: "chevron.backward.circle")
+                            .font(.title2)
+                    }
+                    .opacity(controller.canGoBack ? 1 : 0)
+                    .disabled(!controller.canGoBack)
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         dismiss()
