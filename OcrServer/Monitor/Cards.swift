@@ -88,7 +88,7 @@ struct PerCoreBars: View {
                     .progressViewStyle(.linear)
                     .tint(v < 0.5 ? .green : (v < 0.8 ? .yellow : .red))
                     .frame(height: 6)
-                    Text(String(format: "%.1f%%", v * 100))
+                    Text(v.percentString)
                         .font(.caption2)
                         .monospacedDigit()
                         .frame(minWidth: 50, alignment: .trailing)
