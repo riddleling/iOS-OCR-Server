@@ -17,6 +17,7 @@ final class SystemMonitor: ObservableObject {
     private var lastCPUTicks: host_cpu_load_info = host_cpu_load_info(
         cpu_ticks: (0,0,0,0)
     )
+    private var lastPerCoreTicks: [(UInt32, UInt32, UInt32, UInt32)] = []
     private var lastCPUSampleTime: CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
 
     // Network
@@ -63,6 +64,7 @@ final class SystemMonitor: ObservableObject {
 
     func readSnapshot(appInfo: AppMonitor.AppInfo) -> ResourceSnapshot {
         let cpu = readCPUTotalUsage()
+        let perCore = readPerCoreUsage()
         let mem = readMemory()
         let thermal = ProcessInfo.processInfo.thermalState
         let (avail, total) = readDisk()
@@ -81,7 +83,8 @@ final class SystemMonitor: ObservableObject {
             diskTotal: total,
             networkStatus: net,
             appMemoryFootprint: appInfo.footprint,
-            appThreadCount: appInfo.threadCount
+            appThreadCount: appInfo.threadCount,
+            perCoreCPU: perCore
         )
     }
 }
@@ -119,6 +122,53 @@ extension SystemMonitor {
         guard totalTicks > 0 else { return 0 }
         let busy = (user + sys + nice)
         return max(0, min(1, busy / totalTicks))
+    }
+    
+    func readPerCoreUsage() -> [Double] {
+        var cpuInfo: processor_info_array_t? = nil
+        var cpuInfoCount: mach_msg_type_number_t = 0
+        var processorCount: natural_t = 0
+
+        let kr = host_processor_info(mach_host_self(),
+                                     PROCESSOR_CPU_LOAD_INFO,
+                                     &processorCount,
+                                     &cpuInfo,
+                                     &cpuInfoCount)
+        guard kr == KERN_SUCCESS, let info = cpuInfo else { return [] }
+        defer {
+            let size = vm_size_t(cpuInfoCount) * vm_size_t(MemoryLayout<integer_t>.size)
+            vm_deallocate(mach_task_self_, vm_address_t(bitPattern: info), size)
+        }
+
+        let stride = Int(CPU_STATE_MAX)
+        var usages: [Double] = []
+        var newCache: [(UInt32, UInt32, UInt32, UInt32)] = []
+
+        for i in 0..<Int(processorCount) {
+            let base = i * stride
+            let user = UInt32(info[base + Int(CPU_STATE_USER)])
+            let sys  = UInt32(info[base + Int(CPU_STATE_SYSTEM)])
+            let idle = UInt32(info[base + Int(CPU_STATE_IDLE)])
+            let nice = UInt32(info[base + Int(CPU_STATE_NICE)])
+            let curr = (user, sys, idle, nice)
+
+            // 上一次的 ticks（若沒有，就用當前，避免負值）
+            let prev = i < lastPerCoreTicks.count ? lastPerCoreTicks[i] : curr
+
+            // 使用無號減法避免 tick 溢位造成負值
+            let dUser = Double(curr.0 &- prev.0)
+            let dSys  = Double(curr.1 &- prev.1)
+            let dIdle = Double(curr.2 &- prev.2)
+            let dNice = Double(curr.3 &- prev.3)
+            let total = dUser + dSys + dIdle + dNice
+            let busy = max(0.0, dUser + dSys + dNice)
+
+            usages.append(total > 0 ? min(1.0, busy / total) : 0.0)
+            newCache.append(curr)
+        }
+
+        lastPerCoreTicks = newCache
+        return usages
     }
 
     /// Memory (aggregate) using host_statistics64(vm_statistics64)

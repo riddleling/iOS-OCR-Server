@@ -29,4 +29,6 @@ struct ResourceSnapshot: Identifiable {
     // App-specific
     let appMemoryFootprint: UInt64
     let appThreadCount: Int
+    // Per Core CPU
+    let perCoreCPU: [Double]
 }

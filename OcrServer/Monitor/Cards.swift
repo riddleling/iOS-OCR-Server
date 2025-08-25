@@ -14,6 +14,12 @@ import Network
 struct CPUCard: View {
     let snapshots: [ResourceSnapshot]
     var current: ResourceSnapshot? { snapshots.last }
+    
+    @State private var showPerCore = false
+    
+    private func color(for usage: Double) -> Color {
+        usage < 0.5 ? .green : (usage < 0.8 ? .yellow : .red)
+    }
 
     var body: some View {
         Card {
@@ -26,15 +32,68 @@ struct CPUCard: View {
                         .font(.headline)
                     Text(current?.cpuTotal.percentString ?? "--")
                         .font(.system(size: 28, weight: .bold))
+                        .frame(width: 90, alignment: .trailing)
+                        .monospacedDigit()
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
                 }
                 Spacer()
                 Gauge(value: current?.cpuTotal ?? 0) { Text("") }
                     .gaugeStyle(.accessoryCircularCapacity)
+                    .tint(color(for: current?.cpuTotal ?? 0))
                     .frame(width: 60, height: 60)
             }
             if snapshots.count > 2 {
                 LineChart(values: snapshots.suffix(120).map { $0.cpuTotal })
                     .frame(height: 56)
+            }
+            
+            // 每核心（收合區塊）
+            if let per = current?.perCoreCPU, !per.isEmpty {
+                DisclosureGroup(
+                    isExpanded: $showPerCore,
+                    content: {
+                        PerCoreBars(values: per)
+                            .padding(.top, 8)
+                    },
+                    label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "square.stack.3d.down.right")
+                            Text("Per-core (\(per.count))")
+                        }
+                        .contentShape(Rectangle()) // 讓整條好點擊
+                    }
+                )
+                .animation(.easeInOut, value: showPerCore)
+            }
+        }
+    }
+}
+
+struct PerCoreBars: View {
+    let values: [Double]
+    var body: some View {
+        VStack(spacing: 6) {
+            ForEach(Array(values.enumerated()), id: \.0) { idx, v in
+                HStack(spacing: 8) {
+                    Text("Core \(idx + 1)")
+                        .font(.caption2)
+                        .frame(minWidth: 50, alignment: .leading)
+                        .minimumScaleFactor(0.8)
+                    ProgressView(value: v) {
+                        EmptyView()
+                    } currentValueLabel: {
+                        EmptyView()
+                    }
+                    .progressViewStyle(.linear)
+                    .tint(v < 0.5 ? .green : (v < 0.8 ? .yellow : .red))
+                    .frame(height: 6)
+                    Text(String(format: "%.1f%%", v * 100))
+                        .font(.caption2)
+                        .monospacedDigit()
+                        .frame(minWidth: 50, alignment: .trailing)
+                        .minimumScaleFactor(0.8)
+                }
             }
         }
     }

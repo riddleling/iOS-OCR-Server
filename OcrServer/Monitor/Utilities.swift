@@ -21,4 +21,6 @@ extension UInt64 {
     }
 }
 
-extension Double { var percentString: String { String(format: "%.0f%%", self * 100) } }
+extension Double {
+    var percentString: String { String(format: "%.1f%%", self * 100) }
+}
