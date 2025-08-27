@@ -255,7 +255,6 @@ actor VaporServer {
                 usesLanguageCorrection: usesLanguageCorrection,
                 automaticallyDetectsLanguage: automaticallyDetectsLanguage
             )
-            //let rawText = await textRecognizer.getOcrResult(data: data) ?? ""
 
             guard let result = await textRecognizer.getOcrResult(data: data) else {
                 return try Self.jsonResponse(.internalServerError, UploadResponse(success: false,
