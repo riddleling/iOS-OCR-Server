@@ -8,6 +8,30 @@
 import Vapor
 import Vision
 
+struct OCRBoxItem: Content {
+    let text: String
+    let x: Double
+    let y: Double
+    let w: Double
+    let h: Double
+}
+
+struct OCRResult: Content {
+    let text: String
+    let image_width: Int
+    let image_height: Int
+    let boxes: [OCRBoxItem]
+}
+
+struct UploadResponse: Content {
+    let success: Bool
+    let message: String
+    let ocr_result: String
+    let image_width: Int
+    let image_height: Int
+    let ocr_boxes: [OCRBoxItem]
+}
+
 actor VaporServer {
     private var app: Application?
     private var runTask: Task<Void, Never>?
@@ -192,14 +216,28 @@ actor VaporServer {
             } catch {
                 return try Self.jsonResponse(
                     .badRequest,
-                    UploadResponse(success: false, message: "Missing or empty 'file' part", ocr_result: "")
+                    UploadResponse(
+                        success: false,
+                        message: "Missing or empty 'file' part",
+                        ocr_result: "",
+                        image_width: 0,
+                        image_height: 0,
+                        ocr_boxes: []
+                    )
                 )
             }
 
             guard upload.file.data.readableBytes > 0 else {
                 return try Self.jsonResponse(
                     .badRequest,
-                    UploadResponse(success: false, message: "Missing or empty 'file' part", ocr_result: "")
+                    UploadResponse(
+                        success: false,
+                        message: "Missing or empty 'file' part",
+                        ocr_result: "",
+                        image_width: 0,
+                        image_height: 0,
+                        ocr_boxes: []
+                    )
                 )
             }
 
@@ -217,16 +255,32 @@ actor VaporServer {
                 usesLanguageCorrection: usesLanguageCorrection,
                 automaticallyDetectsLanguage: automaticallyDetectsLanguage
             )
-            let rawText = await textRecognizer.getOcrResult(data: data) ?? ""
+            //let rawText = await textRecognizer.getOcrResult(data: data) ?? ""
 
+            guard let result = await textRecognizer.getOcrResult(data: data) else {
+                return try Self.jsonResponse(.internalServerError, UploadResponse(success: false,
+                                                                                  message: "OCR failed",
+                                                                                  ocr_result: "",
+                                                                                  image_width: 0,
+                                                                                  image_height: 0,
+                                                                                  ocr_boxes: []))
+            }
+            
             let accept = (req.headers.first(name: .accept) ?? "").lowercased()
             if accept.contains("application/json") {
                 return try Self.jsonResponse(
                     .ok,
-                    UploadResponse(success: true, message: "File uploaded successfully", ocr_result: rawText)
+                    UploadResponse(
+                        success: true,
+                        message: "File uploaded successfully",
+                        ocr_result: result.text,
+                        image_width: result.image_width,
+                        image_height: result.image_height,
+                        ocr_boxes: result.boxes
+                    )
                 )
             } else {
-                let escaped = Self.htmlEscape(rawText)
+                let escaped = Self.htmlEscape(result.text)
                 let html = """
                 <!doctype html>
                 <html>
@@ -247,12 +301,6 @@ actor VaporServer {
     }
 
     // MARK: - Helpers
-
-    private struct UploadResponse: Content {
-        let success: Bool
-        let message: String
-        let ocr_result: String
-    }
 
     private static func byteBufferToData(_ buffer: ByteBuffer) -> Data {
         var tmp = buffer
