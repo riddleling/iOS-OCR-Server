@@ -73,7 +73,6 @@ struct DonationView: View {
                         dismiss()
                     } label: {
                         Image(systemName: "xmark")
-                            .font(.title2)
                             .foregroundColor(.primary)
                     }
                 }
