@@ -28,14 +28,15 @@ struct ReadmeView: View {
             .navigationTitle("README")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItemGroup(placement: .navigationBarLeading) {
-                    Button {
-                        controller.goBack()
-                    } label: {
-                        Image(systemName: "chevron.backward.circle")
+                if controller.canGoBack {
+                    ToolbarItemGroup(placement: .navigationBarLeading) {
+                        Button {
+                            controller.goBack()
+                        } label: {
+                            Image(systemName: "chevron.backward")
+                        }
+                        .disabled(!controller.canGoBack)
                     }
-                    .opacity(controller.canGoBack ? 1 : 0)
-                    .disabled(!controller.canGoBack)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
