@@ -256,7 +256,11 @@ actor VaporServer {
                 automaticallyDetectsLanguage: automaticallyDetectsLanguage
             )
 
-            guard let result = await textRecognizer.getOcrResult(data: data) else {
+            let accept = (req.headers.first(name: .accept) ?? "").lowercased()
+            
+            let result = await textRecognizer.getOcrResult(data: data)
+            
+            if result == nil && accept.contains("application/json") {
                 return try Self.jsonResponse(.internalServerError, UploadResponse(success: false,
                                                                                   message: "OCR failed",
                                                                                   ocr_result: "",
@@ -265,21 +269,21 @@ actor VaporServer {
                                                                                   ocr_boxes: []))
             }
             
-            let accept = (req.headers.first(name: .accept) ?? "").lowercased()
+            
             if accept.contains("application/json") {
                 return try Self.jsonResponse(
                     .ok,
                     UploadResponse(
                         success: true,
                         message: "File uploaded successfully",
-                        ocr_result: result.text,
-                        image_width: result.image_width,
-                        image_height: result.image_height,
-                        ocr_boxes: result.boxes
+                        ocr_result: result?.text ?? "",
+                        image_width: result?.image_width ?? 0,
+                        image_height: result?.image_height ?? 0,
+                        ocr_boxes: result?.boxes ?? []
                     )
                 )
             } else {
-                let escaped = Self.htmlEscape(result.text)
+                let escaped = Self.htmlEscape(result?.text ?? "")
                 let html = """
                 <!doctype html>
                 <html>
