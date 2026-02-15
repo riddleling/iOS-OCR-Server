@@ -8,12 +8,24 @@
 import Vapor
 import Vision
 
+struct OCRRectItem: Content {
+    let topLeft_x: Double
+    let topLeft_y: Double
+    let topRight_x: Double
+    let topRight_y: Double
+    let bottomLeft_x: Double
+    let bottomLeft_y: Double
+    let bottomRight_x: Double
+    let bottomRight_y: Double
+}
+
 struct OCRBoxItem: Content {
     let text: String
     let x: Double
     let y: Double
     let w: Double
     let h: Double
+    let rect: OCRRectItem?
 }
 
 struct OCRResult: Content {

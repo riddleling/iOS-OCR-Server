@@ -37,6 +37,12 @@ class TextRecognizer {
         var lines: [String] = []
         var items: [OCRBoxItem] = []
         
+        func toPixel(_ p: NormalizedPoint) -> (Double, Double) {
+            let x = Double(p.x * Double(W))
+            let y = Double((1 - p.y) * Double(H))
+            return (x, y)
+        }
+        
         for obs in observations {
             guard let best = obs.topCandidates(1).first else { continue }
             let text = best.string
@@ -61,7 +67,23 @@ class TextRecognizer {
             let rectW = Double(maxX - minX)
             let rectH = Double(maxY - minY)
             
-            items.append(OCRBoxItem(text: text, x: rectX, y: rectY, w: rectW, h: rectH))
+            // 文字角度
+            var rectItem: OCRRectItem? = nil
+            if let rect = best.boundingBox(for: best.string.startIndex..<best.string.endIndex) {
+                let tl = toPixel(rect.topLeft)
+                let tr = toPixel(rect.topRight)
+                let bl = toPixel(rect.bottomLeft)
+                let br = toPixel(rect.bottomRight)
+
+                rectItem = OCRRectItem(
+                    topLeft_x: tl.0, topLeft_y: tl.1,
+                    topRight_x: tr.0, topRight_y: tr.1,
+                    bottomLeft_x: bl.0, bottomLeft_y: bl.1,
+                    bottomRight_x: br.0, bottomRight_y: br.1
+                )
+            }
+            
+            items.append(OCRBoxItem(text: text, x: rectX, y: rectY, w: rectW, h: rectH, rect: rectItem))
         }
         
         return OCRResult(
