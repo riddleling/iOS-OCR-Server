@@ -108,7 +108,7 @@ Apple의 Vision Framework를 사용하여 iPhone을 강력한 로컬 OCR 서버�
   import os
   import sys
   import requests
-  from PIL import Image, ImageDraw, ImageFont
+  from PIL import Image, ImageDraw, ImageFont, ImageOps
   import numpy as np
   import cv2
 

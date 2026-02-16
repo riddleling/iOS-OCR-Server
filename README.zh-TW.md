@@ -108,7 +108,7 @@
   import os
   import sys
   import requests
-  from PIL import Image, ImageDraw, ImageFont
+  from PIL import Image, ImageDraw, ImageFont, ImageOps
   import numpy as np
   import cv2
 
