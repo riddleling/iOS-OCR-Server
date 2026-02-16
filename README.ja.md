@@ -53,22 +53,42 @@ Apple の Vision Framework を使用して iPhone を強力なローカル OCR �
     "success": true,
     "message": "File uploaded successfully",
     "ocr_result": "Hello\nWorld",
-    "image_width": 1247,
     "image_height": 648,
+    "image_width": 1247,
     "ocr_boxes": [
       {
         "text": "Hello",
-        "x": 434.7201472051599,
-        "y": 269.3123034733379,
-        "w": 216.30970547749456,
-        "h": 69.04344177246088
+        "x": 429.6554479416482,
+        "y": 268.0000001076923,
+        "w": 201.83814102564105,
+        "h": 72,
+        "rect": {
+          "topLeft_x": 429.6554479416482,
+          "topLeft_y": 268.0000001076923,
+          "topRight_x": 631.4935889672893,
+          "topRight_y": 268.0000001076923,
+          "bottomRight_x": 631.4935889672893,
+          "bottomRight_y": 340.0000001076923,
+          "bottomLeft_x": 429.6554479416482,
+          "bottomLeft_y": 340.0000001076923
+        }
       },
       {
         "text": "World",
-        "x": 429.5100030105896,
-        "y": 420.4043957924413,
-        "w": 242.85499225518635,
-        "h": 73.382080078125
+        "x": 421.6618595738782,
+        "y": 417.99999971428576,
+        "w": 251.79807692307696,
+        "h": 80,
+        "rect": {
+          "topLeft_x": 421.6618595738782,
+          "topLeft_y": 417.99999971428576,
+          "topRight_x": 673.4599364969552,
+          "topRight_y": 417.99999971428576,
+          "bottomRight_x": 673.4599364969552,
+          "bottomRight_y": 497.99999971428576,
+          "bottomLeft_x": 421.6618595738782,
+          "bottomLeft_y": 497.99999971428576
+        }
       }
     ]
   }
@@ -186,7 +206,8 @@ Apple の Vision Framework を使用して iPhone を強力なローカル OCR �
       print("response ok")
 
       # 3) Load original image (using PIL)
-      img_pil = Image.open(file_path).convert("RGB")
+      img_pil = Image.open(file_path)
+      img_pil = ImageOps.exif_transpose(img_pil).convert("RGB")
 
       # If server returns different dimensions (should usually match), use server dimensions
       W = int(data.get("image_width", img_pil.width))
