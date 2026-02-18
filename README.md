@@ -102,7 +102,7 @@ No cloud dependencies, unlimited usage, complete privacy.
 
   ```python
   #
-  # pip3 install requests pillow opencv-python
+  # pip3 install requests pillow opencv-python numpy
   #
 
   import os

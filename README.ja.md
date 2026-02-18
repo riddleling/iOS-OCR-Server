@@ -102,7 +102,7 @@ Apple の Vision Framework を使用して iPhone を強力なローカル OCR �
 
   ```python
   #
-  # pip3 install requests pillow opencv-python
+  # pip3 install requests pillow opencv-python numpy
   #
 
   import os
