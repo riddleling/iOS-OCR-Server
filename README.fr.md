@@ -96,7 +96,8 @@ Aucune dépendance cloud, utilisation illimitée, confidentialité complète.
 
   `image_width` et `image_height` représentent la largeur et la hauteur de l'image (en pixels),
   `x` et `y` représentent l'origine du coin supérieur gauche de la boîte de délimitation du texte (en pixels),
-  `w` et `h` représentent la largeur et la hauteur de la boîte de délimitation du texte (en pixels).
+  `w` et `h` représentent la largeur et la hauteur de la boîte de délimitation du texte (en pixels),
+  `rect` fournit les coordonnées des quatre coins de la zone de texte détectée, en conservant son orientation d’origine (non alignée sur les axes).
 
 - **Exemple Python – Dessiner les boîtes de délimitation de texte en utilisant les informations `ocr_boxes` :**
 
