@@ -1,0 +1,47 @@
+## Summary
+
+Adds gstack-ocr, an MCP server that provides OCR capabilities for AI agents by connecting to the iOS OCR Server with automatic fallback to Tesseract CLI.
+
+## Features
+
+- **Three-level service discovery**: Automatically discovers available OCR services
+  1. iOS OCR Server (192.168.50.225:8150)
+  2. Local iOS OCR Server (localhost:8150)
+  3. Tesseract CLI (fallback)
+
+- **Multiple OCR tools**:
+  - `ocr_image` - Perform OCR on image files (PNG, JPG, BMP, TIFF)
+  - `ocr_pdf` - Perform OCR on PDF files
+  - `ocr_url` - Perform OCR on images from URLs
+  - `ocr_health` - Check service health status
+
+- **Language support**: English, Chinese (Simplified), and automatic detection
+
+- **Automatic fallback**: Seamlessly switches to Tesseract if iOS OCR is unavailable
+
+## Files Changed
+
+- `gstack-ocr/package.json` - Project configuration
+- `gstack-ocr/tsconfig.json` - TypeScript configuration
+- `gstack-ocr/src/index.ts` - Main MCP server entry point
+- `gstack-ocr/src/service-discovery.ts` - Three-level service discovery
+- `gstack-ocr/src/ios-ocr-client.ts` - iOS OCR HTTP client
+- `gstack-ocr/src/tesseract-fallback.ts` - Tesseract CLI fallback
+- `gstack-ocr/src/pdf-processor.ts` - PDF image extraction
+- `gstack-ocr/README.md` - Documentation
+- `gstack-ocr/.gitignore` - Git ignore rules
+
+## Usage
+
+Configure in your MCP client:
+
+```json
+{
+  "mcpServers": {
+    "gstack-ocr": {
+      "command": "node",
+      "args": ["./dist/index.js"]
+    }
+  }
+}
+```
