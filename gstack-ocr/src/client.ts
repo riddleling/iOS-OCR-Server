@@ -15,7 +15,10 @@ export class IOSClient {
     private port: number
   ) {}
 
-  async ocrImage(imagePath: string, lang?: string): Promise<OCRResult> {
+  async ocrImage(imagePath: string, options?: { lang?: string; handwriting?: boolean }): Promise<OCRResult> {
+    const lang = options?.lang;
+    const handwriting = options?.handwriting;
+
     // 检查文件存在
     try {
       fs.accessSync(imagePath, fs.constants.R_OK);
@@ -34,6 +37,11 @@ export class IOSClient {
       // 如果指定了语言，添加到表单
       if (lang) {
         form.append("lang", lang);
+      }
+
+      // 手写模式 (iOS OCR Server 支持 handwriting 参数)
+      if (handwriting) {
+        form.append("handwriting", "true");
       }
 
       const result = await this.postForm(form);

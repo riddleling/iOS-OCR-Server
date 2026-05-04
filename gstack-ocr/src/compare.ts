@@ -33,8 +33,8 @@ export async function compareOCR(
 
   // 并行 OCR 两张图片
   const [beforeResult, afterResult] = await Promise.all([
-    client.ocrImage(beforePath, options?.lang),
-    client.ocrImage(afterPath, options?.lang)
+    client.ocrImage(beforePath, { lang: options?.lang }),
+    client.ocrImage(afterPath, { lang: options?.lang })
   ]);
 
   if (!beforeResult.success || !afterResult.success) {

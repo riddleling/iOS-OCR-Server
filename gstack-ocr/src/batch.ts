@@ -47,7 +47,7 @@ export async function batchOCR(
         }
       } else {
         // 图片处理
-        const result = await client.ocrImage(file, options?.lang);
+        const result = await client.ocrImage(file, { lang: options?.lang });
         results.push({
           file,
           success: result.success,

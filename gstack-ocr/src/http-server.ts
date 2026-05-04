@@ -177,7 +177,7 @@ async function handleOcr(req: http.IncomingMessage, res: http.ServerResponse, _u
     }
 
     const client = new IOSClient(server.host, server.port);
-    const result = await client.ocrImage(tempPath, lang);
+    const result = await client.ocrImage(tempPath, { lang });
 
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify(result));

@@ -256,6 +256,80 @@ ocr(input="table.png", table=true, tableFormat="csv")
 ocr(compare={before: "v1.png", after: "v2.png"})
 ```
 
+### 手写识别模式 (`mode`)
+切换识别模式:
+```javascript
+// 印刷体识别 (默认)
+ocr(input="document.png", mode="printed")
+
+// 手写体识别
+ocr(input="handwritten.png", mode="handwritten")
+
+// 自动检测
+ocr(input="any.png", mode="auto")
+```
+
+### 条码检测 (`detectCodes`)
+检测图片中的二维码和条形码:
+```javascript
+// 检测并输出条码
+ocr(input="qrcode.png", detectCodes=true)
+
+// JSON 格式输出条码信息
+ocr(input="receipt.png", detectCodes=true, json=true)
+```
+
+### Agent JSON 模式 (`json`)
+输出结构化 JSON 格式，便于 AI agent 处理:
+```javascript
+// 获取 JSON 格式结果
+ocr(input="document.png", json=true)
+```
+
+**JSON 输出示例**:
+```json
+{
+  "success": true,
+  "text": "识别的文字内容...",
+  "table": {
+    "format": "json",
+    "rows": [...]
+  },
+  "category": {
+    "category": "receipt",
+    "confidence": 0.8,
+    "extractedFields": {
+      "amounts": ["¥25.00", "¥12.50"],
+      "dates": ["2024-01-15"]
+    }
+  },
+  "barcodes": [
+    { "type": "qr", "value": "https://example.com", "format": "QR" }
+  ]
+}
+```
+
+### 内容分类 (`category`)
+自动识别文档类型并提取结构化信息:
+```javascript
+// 识别内容类型
+ocr(input="receipt.png", category=true)
+
+// 获取详细分类和提取字段
+ocr(input="business_card.png", category=true, json=true)
+```
+
+**支持的类型**:
+| 类型 | 识别特征 |
+|------|----------|
+| `receipt` | 收据/发票 - 金额、日期、合计 |
+| `business_card` | 名片 - 职位、电话、邮箱 |
+| `document` | 长文档 - 多行文本 |
+| `screenshot` | 截图 - UI 文本、按钮文字 |
+| `handwritten` | 手写内容 - 中英混合 |
+| `mixed` | 混合内容 |
+| `unknown` | 未知类型 |
+
 ### HTTP API (`httpServer`)
 提供 HTTP REST API 接口:
 ```javascript

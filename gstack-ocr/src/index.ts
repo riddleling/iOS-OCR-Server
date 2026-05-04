@@ -12,6 +12,8 @@ import { batchOCR } from "./batch.js";
 import { detectAndExtractTable } from "./table.js";
 import { compareOCR, formatDiffResult } from "./compare.js";
 import { startHttpServer } from "./http-server.js";
+import { detectBarcodes, formatBarcodes } from "./barcode.js";
+import { categorizeOCRText, formatCategorization } from "./categorize.js";
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
@@ -30,8 +32,12 @@ interface OCRExtendedArgs {
   region?: Region;
   pages?: string;
   lang?: string;
+  mode?: "auto" | "printed" | "handwritten";
   table?: boolean;
   tableFormat?: "csv" | "json";
+  detectCodes?: boolean;
+  json?: boolean;
+  category?: boolean;
   compare?: {
     before: string;
     after: string;
@@ -76,6 +82,11 @@ const OCR_TOOL = {
         type: "string",
         description: "识别语言: eng/chi_sim/chi_tra/jpn/kor/fra/deu/spa 等"
       },
+      mode: {
+        type: "string",
+        enum: ["auto", "printed", "handwritten"],
+        description: "识别模式: auto(自动)/printed(印刷体)/handwritten(手写体)"
+      },
       table: {
         type: "boolean",
         description: "提取表格结构 (CSV 或 JSON)"
@@ -83,6 +94,18 @@ const OCR_TOOL = {
       tableFormat: {
         type: "string",
         description: "表格格式: csv 或 json (默认 json)"
+      },
+      detectCodes: {
+        type: "boolean",
+        description: "检测二维码和条形码"
+      },
+      json: {
+        type: "boolean",
+        description: "输出 JSON 格式结果 (用于 AI agent 结构化处理)"
+      },
+      category: {
+        type: "boolean",
+        description: "自动识别内容类型 (receipt/business_card/document/etc)"
       },
       compare: {
         type: "object",
@@ -147,7 +170,7 @@ async function handleSingleMode(args: OCRExtendedArgs): Promise<{
   content: { type: "text"; text: string }[];
   isError?: boolean;
 }> {
-  const { input, url, screenshot, clipboard, region, pages, lang, table, tableFormat, fallback } = args;
+  const { input, url, screenshot, clipboard, region, pages, lang, mode, table, tableFormat, detectCodes, json, category, fallback } = args;
 
   // 优先级: clipboard > screenshot > url > input
   if (clipboard) {
@@ -155,9 +178,9 @@ async function handleSingleMode(args: OCRExtendedArgs): Promise<{
     if (!imgPath) {
       return { content: [{ type: "text", text: "剪贴板无图片或读取失败" }], isError: true };
     }
-    const ocrResult = await performOCR(imgPath, pages, lang, fallback);
+    const ocrResult = await performOCR(imgPath, pages, lang, mode, fallback);
     try { fs.unlinkSync(imgPath); } catch { /* ignore */ }
-    return formatOCRResult(ocrResult, table, tableFormat);
+    return formatOCRResult(ocrResult, table, tableFormat, detectCodes, json, category, imgPath);
   }
 
   if (screenshot) {
@@ -165,17 +188,17 @@ async function handleSingleMode(args: OCRExtendedArgs): Promise<{
     if (!imgPath) {
       return { content: [{ type: "text", text: "截图失败，请检查系统权限" }], isError: true };
     }
-    const ocrResult = await performOCR(imgPath, pages, lang, fallback);
+    const ocrResult = await performOCR(imgPath, pages, lang, mode, fallback);
     try { fs.unlinkSync(imgPath); } catch { /* ignore */ }
-    return formatOCRResult(ocrResult, table, tableFormat);
+    return formatOCRResult(ocrResult, table, tableFormat, detectCodes, json, category, imgPath);
   }
 
   if (url) {
     const imgPath = await captureUrl(url);
     if (imgPath && imgPath.endsWith(".png")) {
-      const ocrResult = await performOCR(imgPath, pages, lang, fallback);
+      const ocrResult = await performOCR(imgPath, pages, lang, mode, fallback);
       try { fs.unlinkSync(imgPath); } catch { /* ignore */ }
-      return formatOCRResult(ocrResult, table, tableFormat);
+      return formatOCRResult(ocrResult, table, tableFormat, detectCodes, json, category, imgPath);
     }
     const textPath = await downloadUrlText(url);
     if (textPath && fs.existsSync(textPath)) {
@@ -201,8 +224,8 @@ async function handleSingleMode(args: OCRExtendedArgs): Promise<{
     return { content: [{ type: "text", text: `文件不存在: ${input}` }], isError: true };
   }
 
-  const ocrResult = await performOCR(input, pages, lang, fallback);
-  return formatOCRResult(ocrResult, table, tableFormat);
+  const ocrResult = await performOCR(input, pages, lang, mode, fallback);
+  return formatOCRResult(ocrResult, table, tableFormat, detectCodes, json, category, input);
 }
 
 // 批量处理
@@ -297,35 +320,98 @@ async function handleCompareMode(args: OCRExtendedArgs): Promise<{
 function formatOCRResult(
   result: { content: { type: "text"; text: string }[]; isError?: boolean },
   extractTable?: boolean,
-  tableFormat?: "csv" | "json"
+  tableFormat?: "csv" | "json",
+  detectCodes?: boolean,
+  jsonOutput?: boolean,
+  categorize?: boolean,
+  imagePath?: string
 ): { content: { type: "text"; text: string }[]; isError?: boolean } {
   if (result.isError) {
     return result;
   }
 
-  if (!extractTable) {
-    return result;
+  // JSON 模式输出
+  if (jsonOutput) {
+    return formatJSONResult(result, extractTable, tableFormat, detectCodes, categorize, imagePath);
   }
 
-  // 尝试提取表格
-  const ocrText = result.content[0]?.text || "";
-  const tableResult = detectAndExtractTable(ocrText, tableFormat || "json");
+  // 默认文本模式
+  let output = result.content[0]?.text || "";
 
-  if (tableResult.rows.length === 0) {
-    return {
-      content: [
-        { type: "text", text: result.content[0]?.text || "" },
-        { type: "text", text: "\n\n[No table detected]" }
-      ]
-    };
+  // 表格提取
+  if (extractTable) {
+    const ocrText = result.content[0]?.text || "";
+    const tableResult = detectAndExtractTable(ocrText, tableFormat || "json");
+
+    if (tableResult.rows.length > 0) {
+      const formatLabel = tableResult.format.toUpperCase();
+      output += `\n\n## Extracted Table (${formatLabel})\n\n\`\`\`${tableResult.format}\n${tableResult.text}\n\`\`\``;
+    }
   }
 
-  const formatLabel = tableResult.format.toUpperCase();
+  // 条码检测
+  if (detectCodes && imagePath) {
+    detectBarcodes(imagePath).then((barcodeResult) => {
+      if (barcodeResult.success && barcodeResult.barcodes.length > 0) {
+        output += `\n\n## Barcode Detection\n${formatBarcodes(barcodeResult.barcodes)}`;
+      }
+    }).catch(() => {/* ignore */});
+  }
+
+  // 内容分类
+  if (categorize) {
+    const text = result.content[0]?.text || "";
+    const catResult = categorizeOCRText(text);
+    output += `\n\n## Content Categorization\n${formatCategorization(catResult)}`;
+  }
+
+  return { content: [{ type: "text", text: output }] };
+}
+
+/**
+ * Format OCR result as structured JSON for AI agents.
+ */
+function formatJSONResult(
+  result: { content: { type: "text"; text: string }[]; isError?: boolean },
+  extractTable?: boolean,
+  tableFormat?: "csv" | "json",
+  detectCodes?: boolean,
+  categorize?: boolean,
+  imagePath?: string
+): { content: { type: "text"; text: string }[]; isError?: boolean } {
+  const text = result.content[0]?.text || "";
+  const jsonResult: any = {
+    success: true,
+    text: text,
+  };
+
+  // 表格提取
+  if (extractTable) {
+    const tableResult = detectAndExtractTable(text, tableFormat || "json");
+    if (tableResult.rows.length > 0) {
+      jsonResult.table = {
+        format: tableResult.format,
+        rows: tableResult.rows,
+      };
+    }
+  }
+
+  // 内容分类
+  if (categorize) {
+    jsonResult.category = categorizeOCRText(text);
+  }
+
+  // 条码检测 (异步)
+  if (detectCodes && imagePath) {
+    detectBarcodes(imagePath).then((barcodeResult) => {
+      if (barcodeResult.success && barcodeResult.barcodes.length > 0) {
+        jsonResult.barcodes = barcodeResult.barcodes;
+      }
+    }).catch(() => {/* ignore */});
+  }
+
   return {
-    content: [
-      { type: "text", text: result.content[0]?.text || "" },
-      { type: "text", text: `\n\n## Extracted Table (${formatLabel})\n\n\`\`\`${tableResult.format}\n${tableResult.text}\n\`\`\`` }
-    ]
+    content: [{ type: "text", text: JSON.stringify(jsonResult, null, 2) }],
   };
 }
 
@@ -334,6 +420,7 @@ async function performOCR(
   filePath: string,
   pages?: string,
   lang?: string,
+  mode?: "auto" | "printed" | "handwritten",
   fallback?: boolean
 ): Promise<{ content: { type: "text"; text: string }[]; isError?: boolean }> {
   const serverInfo = await discoverOCRServer();
@@ -359,12 +446,15 @@ async function performOCR(
     };
   }
 
+  // 确定是否使用手写模式
+  const handwriting = mode === "handwritten";
+
   // PDF 或图片
   if (filePath.toLowerCase().endsWith(".pdf")) {
     return ocrPdf(client, filePath, pages, lang);
   }
 
-  const result = await client.ocrImage(filePath, lang);
+  const result = await client.ocrImage(filePath, { lang, handwriting });
   if (!result.success) {
     return { content: [{ type: "text", text: result.error || "OCR 失败" }], isError: true };
   }
@@ -416,7 +506,7 @@ async function ocrPdf(client: IOSClient, pdfPath: string, pages?: string, lang?:
       const imgPath = `${outputPrefix}-1.png`;
 
       if (fs.existsSync(imgPath)) {
-        const result = await client.ocrImage(imgPath, lang);
+        const result = await client.ocrImage(imgPath, { lang });
         results.push({ page: pageNum, text: result.success ? result.text || "" : `[${result.error}]` });
         fs.unlinkSync(imgPath);
       } else {
