@@ -15,7 +15,7 @@ export class IOSClient {
     private port: number
   ) {}
 
-  async ocrImage(imagePath: string): Promise<OCRResult> {
+  async ocrImage(imagePath: string, lang?: string): Promise<OCRResult> {
     // 检查文件存在
     try {
       fs.accessSync(imagePath, fs.constants.R_OK);
@@ -30,6 +30,11 @@ export class IOSClient {
 
       const form = new FormData();
       form.append("file", stream);
+
+      // 如果指定了语言，添加到表单
+      if (lang) {
+        form.append("lang", lang);
+      }
 
       const result = await this.postForm(form);
 

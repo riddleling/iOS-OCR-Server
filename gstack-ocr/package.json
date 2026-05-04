@@ -1,13 +1,14 @@
 {
   "name": "gstack-ocr",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "MCP server for iOS OCR Server integration",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "tsx src/index.ts"
+    "dev": "tsx src/index.ts",
+    "start:http": "node dist/http-server.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
