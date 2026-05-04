@@ -5,6 +5,8 @@ import { IOSClient } from "./client.js";
 import { discoverOCRServer, OCRServer } from "./discovery/index.js";
 import { OCRConfig } from "./discovery/config.js";
 import { ocrWithTesseract } from "./fallback/tesseract.js";
+import { captureScreen } from "./screenshot.js";
+import { captureUrl, downloadUrlText } from "./webcapture.js";
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
@@ -20,15 +22,16 @@ const server = new Server(
 
 const OCR_TOOL = {
   name: "ocr",
-  description: "OCR 图片或 PDF 文件，支持中文识别",
+  description: "OCR 图片、PDF、网页或屏幕截图，支持中文识别",
   inputSchema: {
     type: "object",
     properties: {
-      input: { type: "string", description: "文件路径 (png/jpg/jpeg/pdf)" },
+      input: { type: "string", description: "本地文件路径 (png/jpg/jpeg/pdf)" },
+      url: { type: "string", description: "网页 URL，截图后 OCR" },
+      screenshot: { type: "boolean", description: "截取屏幕并 OCR" },
       pages: { type: "string", description: "PDF 页码范围，如 '1-5'" },
-      fallback: { type: "boolean", description: "iOS OCR 不可用时降级到 tesseract" }
-    },
-    required: ["input"]
+      fallback: { type: "boolean", description: "iOS OCR 不可用时降级" }
+    }
   }
 };
 
@@ -43,18 +46,75 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     return { content: [{ type: "text", text: `未知工具: ${name}` }], isError: true };
   }
 
-  const { input, pages, fallback } = args as { input: string; pages?: string; fallback?: boolean };
+  const { input, url, screenshot, pages, fallback } = args as {
+    input?: string;
+    url?: string;
+    screenshot?: boolean;
+    pages?: string;
+    fallback?: boolean;
+  };
+
+  // 优先级: screenshot > url > input
+  if (screenshot) {
+    const imgPath = await captureScreen();
+    if (!imgPath) {
+      return { content: [{ type: "text", text: "截图失败，请检查系统权限" }], isError: true };
+    }
+    // 使用截图进行 OCR
+    const ocrResult = await performOCR(imgPath, pages, fallback);
+    // 清理临时截图
+    try { fs.unlinkSync(imgPath); } catch { /* ignore */ }
+    return ocrResult;
+  }
+
+  if (url) {
+    // 尝试网页截图
+    const imgPath = await captureUrl(url);
+    if (imgPath && imgPath.endsWith(".png")) {
+      const ocrResult = await performOCR(imgPath, pages, fallback);
+      try { fs.unlinkSync(imgPath); } catch { /* ignore */ }
+      return ocrResult;
+    }
+    // 降级：下载纯文本
+    const textPath = await downloadUrlText(url);
+    if (textPath && fs.existsSync(textPath)) {
+      const text = fs.readFileSync(textPath, "utf-8").trim();
+      try { fs.unlinkSync(textPath); } catch { /* ignore */ }
+      return { content: [{ type: "text", text: text || "[网页无文本内容]" }] };
+    }
+    return {
+      content: [{ type: "text", text: "网页截图失败，尝试安装 wkhtmltoimage 或 cutycapt" }],
+      isError: true
+    };
+  }
+
+  // 传统模式：本地文件
+  if (!input) {
+    return {
+      content: [{ type: "text", text: "请提供 input、url 或 screenshot 参数" }],
+      isError: true
+    };
+  }
 
   // 验证文件
   if (!fs.existsSync(input)) {
     return { content: [{ type: "text", text: `文件不存在: ${input}` }], isError: true };
   }
 
+  return performOCR(input, pages, fallback);
+});
+
+// 统一的 OCR 处理函数
+async function performOCR(
+  filePath: string,
+  pages?: string,
+  fallback?: boolean
+): Promise<{ content: { type: "text"; text: string }[]; isError?: boolean }> {
   // 发现 OCR server
   const serverInfo = await discoverOCRServer();
   if (!serverInfo) {
     if (fallback) {
-      return ocrWithTesseract(input, pages);
+      return ocrWithTesseract(filePath, pages);
     }
     return {
       content: [{ type: "text", text: "无法发现 iOS OCR Server，请确保设备在同一局域网" }],
@@ -66,7 +126,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
   if (!(await client.isAvailable())) {
     if (fallback) {
-      return ocrWithTesseract(input, pages);
+      return ocrWithTesseract(filePath, pages);
     }
     return {
       content: [{ type: "text", text: `iOS OCR Server (${serverInfo.host}:${serverInfo.port}) 不可用` }],
@@ -75,24 +135,26 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   }
 
   // PDF 或图片
-  if (input.toLowerCase().endsWith(".pdf")) {
-    return ocrPdf(client, input, pages);
+  if (filePath.toLowerCase().endsWith(".pdf")) {
+    return ocrPdf(client, filePath, pages);
   }
 
-  const result = await client.ocrImage(input);
+  const result = await client.ocrImage(filePath);
   if (!result.success) {
     return { content: [{ type: "text", text: result.error || "OCR 失败" }], isError: true };
   }
 
   return { content: [{ type: "text", text: result.text || "" }] };
-});
+}
 
-async function ocrPdf(client: IOSClient, pdfPath: string, pages?: string) {
+type OCRResponse = { content: { type: "text"; text: string }[]; isError?: boolean };
+
+async function ocrPdf(client: IOSClient, pdfPath: string, pages?: string): Promise<OCRResponse> {
   // 检查 pdftoppm (Linux/Mac) 或使用 Node.js 库 (Windows)
   const isWindows = process.platform === "win32";
 
   if (isWindows) {
-    return ocrPdfWithLib(pdfPath, pages, client);
+    return ocrPdfWithLib(client, pdfPath, pages);
   }
 
   // Linux/Mac: 使用 pdftoppm
@@ -146,7 +208,7 @@ async function ocrPdf(client: IOSClient, pdfPath: string, pages?: string) {
   };
 }
 
-async function ocrPdfWithLib(client: IOSClient, pdfPath: string, pages?: string) {
+async function ocrPdfWithLib(client: IOSClient, pdfPath: string, pages?: string): Promise<OCRResponse> {
   // Windows: 使用 pdf-lib (纯 Node.js，无需外部依赖)
   try {
     // 动态导入，因为这是可选的

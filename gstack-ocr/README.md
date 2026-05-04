@@ -35,8 +35,39 @@ ocr:
 识别 PDF:
 - ocr(input="/path/to/file.pdf", pages="1-5")
 
+截图 OCR:
+- ocr(screenshot=true)
+
+网页 OCR:
+- ocr(url="https://example.com")
+
 启用降级:
 - ocr(input="/path/to/image.png", fallback=true)
+```
+
+## 新功能
+
+### 截图 OCR (`screenshot`)
+截取当前屏幕并识别文字。自动检测平台:
+- macOS: `screencapture`
+- Linux: `gnome-screenshot` 或 ImageMagick `import`
+- Windows: PowerShell System.Drawing
+
+### 网页 OCR (`url`)
+抓取网页并识别文字。优先截图，失败则降级提取纯文本。自动检测平台:
+- macOS/Linux: `wkhtmltoimage` 或 `cutycapt`
+- Windows: PowerShell 下载并提取纯文本
+
+安装截图工具:
+```bash
+# Linux
+sudo apt install wkhtmltoimage cutycapt gnome-screenshot imagemagick
+
+# macOS
+brew install wkhtmltopdf
+
+# Windows (使用 chocolatey)
+choco install wkhtmltopdf
 ```
 
 ## 自动发现
