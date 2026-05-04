@@ -5,8 +5,9 @@ import { IOSClient } from "./client.js";
 import { discoverOCRServer, OCRServer } from "./discovery/index.js";
 import { OCRConfig } from "./discovery/config.js";
 import { ocrWithTesseract } from "./fallback/tesseract.js";
-import { captureScreen } from "./screenshot.js";
+import { captureScreen, Region } from "./screenshot.js";
 import { captureUrl, downloadUrlText } from "./webcapture.js";
+import { captureClipboard } from "./screenshot.js";
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
@@ -29,6 +30,17 @@ const OCR_TOOL = {
       input: { type: "string", description: "本地文件路径 (png/jpg/jpeg/pdf)" },
       url: { type: "string", description: "网页 URL，截图后 OCR" },
       screenshot: { type: "boolean", description: "截取屏幕并 OCR" },
+      clipboard: { type: "boolean", description: "从剪贴板获取图片并 OCR" },
+      region: {
+        type: "object",
+        description: "截图区域 {x, y, width, height}",
+        properties: {
+          x: { type: "number" },
+          y: { type: "number" },
+          width: { type: "number" },
+          height: { type: "number" }
+        }
+      },
       pages: { type: "string", description: "PDF 页码范围，如 '1-5'" },
       fallback: { type: "boolean", description: "iOS OCR 不可用时降级" }
     }
@@ -46,17 +58,29 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     return { content: [{ type: "text", text: `未知工具: ${name}` }], isError: true };
   }
 
-  const { input, url, screenshot, pages, fallback } = args as {
+  const { input, url, screenshot, clipboard, region, pages, fallback } = args as {
     input?: string;
     url?: string;
     screenshot?: boolean;
+    clipboard?: boolean;
+    region?: Region;
     pages?: string;
     fallback?: boolean;
   };
 
-  // 优先级: screenshot > url > input
+  // 优先级: clipboard > screenshot > url > input
+  if (clipboard) {
+    const imgPath = await captureClipboard();
+    if (!imgPath) {
+      return { content: [{ type: "text", text: "剪贴板无图片或读取失败" }], isError: true };
+    }
+    const ocrResult = await performOCR(imgPath, pages, fallback);
+    try { fs.unlinkSync(imgPath); } catch { /* ignore */ }
+    return ocrResult;
+  }
+
   if (screenshot) {
-    const imgPath = await captureScreen();
+    const imgPath = await captureScreen(region);
     if (!imgPath) {
       return { content: [{ type: "text", text: "截图失败，请检查系统权限" }], isError: true };
     }
@@ -91,7 +115,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   // 传统模式：本地文件
   if (!input) {
     return {
-      content: [{ type: "text", text: "请提供 input、url 或 screenshot 参数" }],
+      content: [{ type: "text", text: "请提供 input、url、screenshot 或 clipboard 参数" }],
       isError: true
     };
   }

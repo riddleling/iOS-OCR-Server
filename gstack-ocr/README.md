@@ -38,6 +38,12 @@ ocr:
 截图 OCR:
 - ocr(screenshot=true)
 
+区域截图 OCR:
+- ocr(screenshot=true, region={"x": 100, "y": 100, "width": 800, "height": 600})
+
+剪贴板图片 OCR:
+- ocr(clipboard=true)
+
 网页 OCR:
 - ocr(url="https://example.com")
 
@@ -52,6 +58,21 @@ ocr:
 - macOS: `screencapture`
 - Linux: `gnome-screenshot` 或 ImageMagick `import`
 - Windows: PowerShell System.Drawing
+
+### 区域截图 OCR (`screenshot` + `region`)
+截取屏幕指定区域并识别文字:
+```javascript
+ocr(screenshot=true, region={"x": 100, "y": 100, "width": 800, "height": 600})
+```
+参数说明:
+- `x`, `y`: 左上角坐标
+- `width`, `height`: 区域宽高
+
+### 剪贴板 OCR (`clipboard`)
+从剪贴板获取图片并识别文字。适用于截图后直接 OCR:
+```javascript
+ocr(clipboard=true)
+```
 
 ### 网页 OCR (`url`)
 抓取网页并识别文字。优先截图，失败则降级提取纯文本。自动检测平台:
