@@ -166,7 +166,7 @@ struct BatteryCard: View {
             if let level = current?.batteryLevel {
                 HStack {
                     ProgressView(value: Double(level))
-                    Text("\(Int(level * 100))%")
+                    Text(Double(level), format: .percent.precision(.fractionLength(0)))
                         .font(.subheadline)
                         .monospacedDigit()
                 }
