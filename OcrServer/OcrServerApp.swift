@@ -16,6 +16,7 @@ struct OcrServerApp: App {
             ContentView(
                 serverManager: serverManager
             )
+            .preferredColorScheme(.dark)
             .onAppear {
                 UIApplication.shared.isIdleTimerDisabled = true
             }

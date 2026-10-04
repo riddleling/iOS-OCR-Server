@@ -16,6 +16,71 @@ struct ContentView: View {
     @State private var showingDonation = false
     
     var body: some View {
+        GeometryReader { proxy in
+            let showsTwoColumns = isExpandedLandscape(size: proxy.size)
+            let fullWidth = proxy.size.width
+                + proxy.safeAreaInsets.leading
+                + proxy.safeAreaInsets.trailing
+            let columnWidth = (fullWidth - 1) / 2
+            
+            if showsTwoColumns {
+                HStack(spacing: 0) {
+                    homeContent
+                        .overlay(alignment: .topLeading) {
+                            Text("Home")
+                                .font(.headline)
+                                .padding(.top, 36)
+                                .padding(.leading, 20)
+                        }
+                        .frame(width: columnWidth)
+                    Color(uiColor: .separator)
+                        .frame(width: 1)
+                    DashboardView(
+                        showsCloseButton: false,
+                        onOpenDonation: openDonation,
+                        onOpenSettings: openSettings
+                    )
+                        .frame(width: columnWidth)
+                }
+                .frame(width: fullWidth)
+                .offset(x: -proxy.safeAreaInsets.leading)
+            } else {
+                homeNavigationView
+            }
+        }
+    }
+    
+    private func isExpandedLandscape(size: CGSize) -> Bool {
+        size.width > size.height && size.width / size.height < 1.6
+    }
+    
+    private var homeNavigationView: some View {
+        NavigationStack {
+            homeContent
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button(action: openDonation) {
+                            Image(systemName: "cup.and.saucer")
+                        }
+                        .accessibilityLabel("Donation")
+                    }
+                    
+                    ToolbarItemGroup(placement: .topBarTrailing) {
+                        Button(action: openMonitor) {
+                            Image(systemName: "waveform.path.ecg.rectangle")
+                        }
+                        .accessibilityLabel("Monitor")
+                        
+                        Button(action: openSettings) {
+                            Image(systemName: "gearshape")
+                        }
+                        .accessibilityLabel("Settings")
+                    }
+                }
+        }
+    }
+    
+    private var homeContent: some View {
         VStack {
             HStack {
                 Button(action: openReadme) {
@@ -60,11 +125,11 @@ struct ContentView: View {
             
             Text("OCR Server v\(Bundle.main.appVersion)")
                 .font(.title2)
-                .foregroundColor(.white)
+                .foregroundStyle(.primary)
             
             Text("Status : \(serverManager.status)")
                 .font(.headline)
-                .foregroundColor(.white)
+                .foregroundStyle(.primary)
                 .padding(10)
             
             Spacer()
@@ -83,38 +148,7 @@ struct ContentView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.black)
-        .overlay(
-            Button(action: openDonation) {
-                Image(systemName: "cup.and.saucer")
-                    .font(.title2)
-                    .foregroundColor(.white)
-            }
-            .padding(.top, 24)
-            .padding(.leading, 20),
-            alignment: .topLeading
-        )
-        .overlay(
-            HStack {
-                Button(action: openMonitor) {
-                    Image(systemName: "waveform.path.ecg.rectangle")
-                        .font(.title2)
-                        .foregroundColor(.white)
-                }
-                .padding(.top, 24)
-                .padding(.leading, 20)
-                .padding(.trailing, 12)
-                
-                Button(action: openSettings) {
-                    Image(systemName: "gearshape")
-                        .font(.title2)
-                        .foregroundColor(.white)
-                }
-                .padding(.top, 24)
-                .padding(.trailing, 20)
-            },
-            alignment: .topTrailing
-        )
+        .background(Color(uiColor: .systemBackground))
         .sheet(isPresented: $showingReadme) {
             ReadmeView()
         }
@@ -183,14 +217,14 @@ struct NetworkInterfaceView: View {
         VStack(spacing: 5) {
             Text(title)
                 .font(.headline)
-                .foregroundColor(.white)
+                .foregroundStyle(.primary)
             
             Button(action: openWebView) {
                 Text(address)
                     .font(.title)
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)
-                    .foregroundColor(.white)
+                    .foregroundStyle(.primary)
                     .underline()
                     .padding(5)
             }

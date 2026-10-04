@@ -13,9 +13,22 @@ import SwiftUI
 struct DashboardView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var sampler = Sampler()
+    let showsCloseButton: Bool
+    let onOpenDonation: (() -> Void)?
+    let onOpenSettings: (() -> Void)?
+    
+    init(
+        showsCloseButton: Bool = true,
+        onOpenDonation: (() -> Void)? = nil,
+        onOpenSettings: (() -> Void)? = nil
+    ) {
+        self.showsCloseButton = showsCloseButton
+        self.onOpenDonation = onOpenDonation
+        self.onOpenSettings = onOpenSettings
+    }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
                     CPUCard(snapshots: sampler.snapshots)
@@ -34,7 +47,19 @@ struct DashboardView: View {
             .navigationTitle("Monitor")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItemGroup(placement: .navigationBarLeading) {
+                ToolbarItemGroup(placement: .topBarLeading) {
+                    if let onOpenDonation {
+                        Button(action: onOpenDonation) {
+                            Image(systemName: "cup.and.saucer")
+                        }
+                        .accessibilityLabel("Donation")
+                    }
+                    if let onOpenSettings {
+                        Button(action: onOpenSettings) {
+                            Image(systemName: "gearshape")
+                        }
+                        .accessibilityLabel("Settings")
+                    }
                     Button(action: { sampler.clear() }) {
                         Image(systemName: "arrow.clockwise.circle")
                     }
@@ -42,12 +67,14 @@ struct DashboardView: View {
                         Image(systemName: sampler.isRunning ? "pause.circle" : "play.circle")
                     }
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .foregroundColor(.primary)
+                if showsCloseButton {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            dismiss()
+                        } label: {
+                            Image(systemName: "xmark")
+                                .foregroundColor(.primary)
+                        }
                     }
                 }
             }
