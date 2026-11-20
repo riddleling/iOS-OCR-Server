@@ -12,13 +12,16 @@ class TextRecognizer {
     let recognitionLevel : RecognizeTextRequest.RecognitionLevel
     let usesLanguageCorrection : Bool
     let automaticallyDetectsLanguage : Bool
+    let recognitionLanguages : [Locale.Language]
     
     init(recognitionLevel: RecognizeTextRequest.RecognitionLevel = .accurate,
          usesLanguageCorrection: Bool = true,
-         automaticallyDetectsLanguage: Bool = true) {
+         automaticallyDetectsLanguage: Bool = true,
+         recognitionLanguages: [Locale.Language] = []) {
         self.recognitionLevel = recognitionLevel
         self.usesLanguageCorrection = usesLanguageCorrection
         self.automaticallyDetectsLanguage = automaticallyDetectsLanguage
+        self.recognitionLanguages = recognitionLanguages
     }
     
     func getOcrResult(data: Data) async -> OCRResult? {
@@ -31,6 +34,9 @@ class TextRecognizer {
         request.recognitionLevel = recognitionLevel
         request.usesLanguageCorrection = usesLanguageCorrection
         request.automaticallyDetectsLanguage = automaticallyDetectsLanguage
+        if !recognitionLanguages.isEmpty {
+            request.recognitionLanguages = recognitionLanguages
+        }
         
         let observations = (try? await request.perform(on: data)) ?? []
         
