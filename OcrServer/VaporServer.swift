@@ -156,6 +156,18 @@ actor VaporServer {
         isRunning = false
     }
 
+    // MARK: - Request Options
+
+    // 讀取 ?languages=zh-Hant,en-US，依優先順序傳給 Vision
+    private static func recognitionLanguages(from req: Request) -> [Locale.Language] {
+        guard let value = req.query[String.self, at: "languages"] else { return [] }
+        return value
+            .split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+            .map { Locale.Language(identifier: $0) }
+    }
+
     // MARK: - Routes
 
     private func routes(_ app: Application) throws {
@@ -307,7 +319,8 @@ actor VaporServer {
             let textRecognizer = TextRecognizer(
                 recognitionLevel: recognitionLevel,
                 usesLanguageCorrection: usesLanguageCorrection,
-                automaticallyDetectsLanguage: automaticallyDetectsLanguage
+                automaticallyDetectsLanguage: automaticallyDetectsLanguage,
+                recognitionLanguages: Self.recognitionLanguages(from: req)
             )
 
             let accept = (req.headers.first(name: .accept) ?? "").lowercased()
@@ -412,7 +425,8 @@ actor VaporServer {
             if #available(iOS 26, *) {
                 let docRecognizer = DocRecognizer(
                     usesLanguageCorrection: usesLanguageCorrection,
-                    automaticallyDetectsLanguage: automaticallyDetectsLanguage
+                    automaticallyDetectsLanguage: automaticallyDetectsLanguage,
+                    recognitionLanguages: Self.recognitionLanguages(from: req)
                 )
                 resultText = await docRecognizer.recognizeParagraphText(from: data)
             }

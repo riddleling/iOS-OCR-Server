@@ -12,10 +12,13 @@ import Vision
 class DocRecognizer {
     let usesLanguageCorrection : Bool
     let automaticallyDetectsLanguage : Bool
+    let recognitionLanguages : [Locale.Language]
     
-    init(usesLanguageCorrection: Bool = true, automaticallyDetectsLanguage: Bool = true) {
+    init(usesLanguageCorrection: Bool = true, automaticallyDetectsLanguage: Bool = true,
+         recognitionLanguages: [Locale.Language] = []) {
         self.usesLanguageCorrection = usesLanguageCorrection
         self.automaticallyDetectsLanguage = automaticallyDetectsLanguage
+        self.recognitionLanguages = recognitionLanguages
     }
     
     func recognizeParagraphText(from imageData: Data) async -> String {
@@ -23,6 +26,9 @@ class DocRecognizer {
             request.textRecognitionOptions.automaticallyDetectLanguage = automaticallyDetectsLanguage
             request.textRecognitionOptions.useLanguageCorrection = usesLanguageCorrection
             request.textRecognitionOptions.maximumCandidateCount = 1
+            if !recognitionLanguages.isEmpty {
+                request.textRecognitionOptions.recognitionLanguages = recognitionLanguages
+            }
 
             let observations = try? await request.perform(on: imageData)
 
