@@ -263,6 +263,18 @@ The JSON response looks like this:
 }
 ```
 
+### Recognition languages
+
+Both `upload` and `docOCR` accept an optional `languages` query parameter: a comma-separated list of language codes in priority order. It is passed to Vision as the recognition languages. Without it, Vision's default languages are used.
+
+This helps when automatic detection picks the wrong script, for example Simplified instead of Traditional Chinese:
+
+````
+curl -H "Accept: application/json" \
+    -X POST "http://<YOUR IP>:8000/docOCR?languages=zh-Hant,en-US" \
+    -F "file=@01.png"
+````
+
 
 ## Features
 
