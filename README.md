@@ -264,7 +264,7 @@ The JSON response looks like this:
 ```
 
 
-### Recognition languages
+## Recognition languages
 
 Both `upload` and `docOCR` accept an optional `languages` query parameter: a comma-separated list of language codes in priority order. It is passed to Vision as the recognition languages. Without it, Vision's default languages are used.
 

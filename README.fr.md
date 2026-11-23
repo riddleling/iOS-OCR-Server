@@ -264,7 +264,7 @@ La réponse JSON ressemble à ceci :
 ```
 
 
-### Langues de reconnaissance de texte
+## Langues de reconnaissance de texte
 
 `upload` et `docOCR` acceptent tous deux un paramètre de requête facultatif `languages`, contenant une liste de codes de langue séparés par des virgules et classés par ordre de priorité. Ces codes de langue sont transmis à Vision comme langues de reconnaissance. Si ce paramètre n'est pas spécifié, les langues par défaut de Vision sont utilisées.
 
