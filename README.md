@@ -263,6 +263,7 @@ The JSON response looks like this:
 }
 ```
 
+
 ### Recognition languages
 
 Both `upload` and `docOCR` accept an optional `languages` query parameter: a comma-separated list of language codes in priority order. It is passed to Vision as the recognition languages. Without it, Vision's default languages are used.
@@ -274,6 +275,17 @@ curl -H "Accept: application/json" \
     -X POST "http://<YOUR IP>:8000/docOCR?languages=zh-Hant,en-US" \
     -F "file=@01.png"
 ````
+
+Use the `supportedRecognitionLanguages` API to retrieve the list of text recognition languages currently supported by the iOS Vision Framework:
+
+```
+curl http://<YOUR IP>:8000/supportedRecognitionLanguages
+```
+
+Response Example:
+```
+["ar-SA","ars-SA","cs-CZ","da-DK","de-DE","en-US","es-ES","fr-FR","id-ID","it-IT","ja-JP","ko-KR","ms-MY","nb-NO","nl-NL","nn-NO","no-NO","pl-PL","pt-BR","ro-RO","ru-RU","sv-SE","th-TH","tr-TR","uk-UA","vi-VT","yue-Hans","yue-Hant","zh-Hans","zh-Hant"]
+```
 
 
 ## Features

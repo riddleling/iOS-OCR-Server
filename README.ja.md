@@ -264,6 +264,31 @@ JSON レスポンスは次のようになります：
 ```
 
 
+### 文字認識言語
+
+`upload` と `docOCR` は、オプションの `languages` クエリパラメータに対応しています。このパラメータには、優先順位順に並べたカンマ区切りの言語コードリストを指定できます。指定された言語コードは、認識言語として Vision に渡されます。指定がない場合は、Vision のデフォルト言語が使用されます。
+
+自動検出で誤った文字体系が選択された場合に役立ちます。例えば、繁体字中国語ではなく簡体字中国語として認識されてしまう場合などです：
+
+```
+curl -H "Accept: application/json" \
+    -X POST "http://<YOUR IP>:8000/docOCR?languages=zh-Hant,en-US" \
+    -F "file=@01.png"
+```
+
+`supportedRecognitionLanguages` API を使用して、iOS Vision Framework が現在サポートしている文字認識言語の一覧を取得できます：
+
+```
+curl http://<YOUR IP>:8000/supportedRecognitionLanguages
+```
+
+Response 例：
+
+```
+["ar-SA","ars-SA","cs-CZ","da-DK","de-DE","en-US","es-ES","fr-FR","id-ID","it-IT","ja-JP","ko-KR","ms-MY","nb-NO","nl-NL","nn-NO","no-NO","pl-PL","pt-BR","ro-RO","ru-RU","sv-SE","th-TH","tr-TR","uk-UA","vi-VT","yue-Hans","yue-Hant","zh-Hans","zh-Hant"]
+```
+
+
 ## 機能
 
 - Apple の Vision Framework による高精度 OCR

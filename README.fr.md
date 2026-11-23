@@ -264,6 +264,31 @@ La réponse JSON ressemble à ceci :
 ```
 
 
+### Langues de reconnaissance de texte
+
+`upload` et `docOCR` acceptent tous deux un paramètre de requête facultatif `languages`, contenant une liste de codes de langue séparés par des virgules et classés par ordre de priorité. Ces codes de langue sont transmis à Vision comme langues de reconnaissance. Si ce paramètre n'est pas spécifié, les langues par défaut de Vision sont utilisées.
+
+Cette fonctionnalité est utile lorsque la détection automatique sélectionne un système d’écriture incorrect, par exemple lorsqu’elle choisit le chinois simplifié au lieu du chinois traditionnel :
+
+```
+curl -H "Accept: application/json" \
+    -X POST "http://<YOUR IP>:8000/docOCR?languages=zh-Hant,en-US" \
+    -F "file=@01.png"
+```
+
+Vous pouvez utiliser l’API `supportedRecognitionLanguages` pour obtenir la liste des langues de reconnaissance de texte actuellement prises en charge par le framework Vision d’iOS :
+
+```
+curl http://<YOUR IP>:8000/supportedRecognitionLanguages
+```
+
+Exemple de Response :
+
+```
+["ar-SA","ars-SA","cs-CZ","da-DK","de-DE","en-US","es-ES","fr-FR","id-ID","it-IT","ja-JP","ko-KR","ms-MY","nb-NO","nl-NL","nn-NO","no-NO","pl-PL","pt-BR","ro-RO","ru-RU","sv-SE","th-TH","tr-TR","uk-UA","vi-VT","yue-Hans","yue-Hant","zh-Hans","zh-Hant"]
+```
+
+
 ## Fonctionnalités
 
 - OCR haute précision alimenté par le Vision Framework d'Apple

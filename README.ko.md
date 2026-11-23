@@ -264,6 +264,31 @@ JSON 응답은 다음과 같습니다：
 ```
 
 
+### 텍스트 인식 언어
+
+`upload` 및 `docOCR`은 선택적 `languages` 쿼리 매개변수를 지원합니다. 이 매개변수에는 우선순위 순서대로 쉼표로 구분된 언어 코드 목록을 지정할 수 있습니다. 지정된 언어 코드는 인식 언어로 Vision에 전달됩니다. 이 매개변수를 지정하지 않으면 Vision의 기본 언어가 사용됩니다.
+
+자동 감지에서 잘못된 문자 체계가 선택되는 경우 유용합니다. 예를 들어 번체 중국어가 아닌 간체 중국어로 잘못 인식되는 경우입니다：
+
+```
+curl -H "Accept: application/json" \
+    -X POST "http://<YOUR IP>:8000/docOCR?languages=zh-Hant,en-US" \
+    -F "file=@01.png"
+```
+
+`supportedRecognitionLanguages` API를 통해 iOS Vision Framework에서 현재 지원하는 텍스트 인식 언어 목록을 가져올 수 있습니다:
+
+```
+curl http://<YOUR IP>:8000/supportedRecognitionLanguages
+```
+
+Response 예시:
+
+```
+["ar-SA","ars-SA","cs-CZ","da-DK","de-DE","en-US","es-ES","fr-FR","id-ID","it-IT","ja-JP","ko-KR","ms-MY","nb-NO","nl-NL","nn-NO","no-NO","pl-PL","pt-BR","ro-RO","ru-RU","sv-SE","th-TH","tr-TR","uk-UA","vi-VT","yue-Hans","yue-Hant","zh-Hans","zh-Hant"]
+```
+
+
 ## 기능
 
 - Apple Vision Framework 기반 고정밀 OCR

@@ -264,6 +264,31 @@ JSON 响应格式如下：
 ```
 
 
+### 文字识别语言
+
+`upload` 和 `docOCR` 均支持可选的 `languages` 查询参数，用于传入以逗号分隔的语言代码列表，并按照优先级排序。这些语言代码会传递给 Vision，作为文字识别语言。如果未指定此参数，则使用 Vision 的默认语言。
+
+当自动检测选择了错误的文字系统时，此功能就能派上用场，例如将简体中文误判为繁体中文：
+
+```
+curl -H "Accept: application/json" \
+    -X POST "http://<YOUR IP>:8000/docOCR?languages=zh-Hant,en-US" \
+    -F "file=@01.png"
+```
+
+可通过 `supportedRecognitionLanguages` API，获取 iOS Vision Framework 当前支持的文字识别语言列表：
+
+```
+curl http://<YOUR IP>:8000/supportedRecognitionLanguages
+```
+
+Response 示例：
+
+```
+["ar-SA","ars-SA","cs-CZ","da-DK","de-DE","en-US","es-ES","fr-FR","id-ID","it-IT","ja-JP","ko-KR","ms-MY","nb-NO","nl-NL","nn-NO","no-NO","pl-PL","pt-BR","ro-RO","ru-RU","sv-SE","th-TH","tr-TR","uk-UA","vi-VT","yue-Hans","yue-Hant","zh-Hans","zh-Hant"]
+```
+
+
 ## 功能特色
 
 - 采用 Apple Vision Framework 的高精度 OCR
