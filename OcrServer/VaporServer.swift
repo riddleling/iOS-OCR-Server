@@ -270,6 +270,16 @@ actor VaporServer {
             return Self.htmlResponse(html)
         }
 
+        // GET /supportedRecognitionLanguages
+        // 回傳 iOS 18+ Vision 文字辨識目前支援的 BCP-47 語言識別碼。
+        app.get("supportedRecognitionLanguages") { _ async throws -> Response in
+            let languages = RecognizeTextRequest()
+                .supportedRecognitionLanguages
+                .map { "\($0.languageCode!)-\(($0.region?.identifier ?? $0.script?.identifier)!)" }
+                .sorted()
+            return try Self.jsonResponse(.ok, languages)
+        }
+
         // POST /upload（限制收集本文大小，可自行調整）
         app.on(.POST, "upload", body: .collect(maxSize: "100mb")) { [weak self] req async throws -> Response in
             guard let self else { throw Abort(.internalServerError) }
